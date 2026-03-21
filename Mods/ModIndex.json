@@ -30,6 +30,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "first_person_body",
+          "name": "First Person Body",
+          "author": "dazawmbie",
+          "version": "1.0",
+          "description": "Makes your lower body visible in first person.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/TPC_FirstPersonBody.dll",
+              "filename": "TPC_FirstPersonBody.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
