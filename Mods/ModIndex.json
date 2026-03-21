@@ -16,7 +16,7 @@
               "destination": "BepInEx/plugins"
             }
           ]
-        }
+        },
         {
           "id": "containerfinder",
           "name": "ContainerFinder",
