@@ -58,6 +58,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "fall_damage_tweaks",
+          "name": "Fall Damage Tweaks",
+          "author": "dazawmbie",
+          "version": "1.0",
+          "description": "Tweaks fall damage to be based on the height of the fall.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/TPC_FallDamageTweak.dll",
+              "filename": "TPC_FallDamageTweak.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
