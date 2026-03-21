@@ -80,6 +80,7 @@
         {
           "id": "more_torpedo_damage",
           "name": "More Torpedo Damage",
+          "dependencies": ["nautlius"],
           "author": "nb77",
           "version": "1",
           "description": "Tweaks fall damage to be based on the height of the fall.",
