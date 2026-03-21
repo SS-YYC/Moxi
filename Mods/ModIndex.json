@@ -44,6 +44,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "performance_mod",
+          "name": "Performance Mod",
+          "author": "dazawmbie",
+          "version": "1.0",
+          "description": "Improves game performance in areas with dense fog.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/TPC_PerformanceMod.dll",
+              "filename": "TPC_PerformanceMod.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
