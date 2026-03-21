@@ -11,8 +11,22 @@
           "description": "Removes the version number on the HUD.",
           "files": [
             {
-              "url": "https://github.com/KerbalMissile/MoxiTest/raw/main/TPC_NoVersionNumber.dll",
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/TPC_NoVersionNumber.dll",
               "filename": "TPC_NoVersionNumber.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        }
+        {
+          "id": "containerfinder",
+          "name": "ContainerFinder",
+          "author": "xkursat",
+          "version": "1.0.0",
+          "description": "Find and locate all containers on the map with 3D markers and distance indicators! Never lose track of your storage containers again.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ContainerFinder.dll",
+              "filename": "ContainerFinder.dll",
               "destination": "BepInEx/plugins"
             }
           ]
