@@ -15,7 +15,7 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Subnautica: Below Zero | Supported |
 | Slime Rancher | Supported |
 | Slime Rancher 2 | Supported |
-| Dyson Sphere Program | Coming March 25th |
+| Dyson Sphere Program | Coming March 23rd |
 
 ---
 
