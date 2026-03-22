@@ -72,6 +72,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "no_tree_collision",
+          "name": "No Tree Collision",
+          "author": "HYPExMon5ter",
+          "version": "2.0.0",
+          "description": "Removes tree collision and the ability to climb trees.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/NoTreeCollision.dll",
+              "filename": "NoTreeCollision.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
