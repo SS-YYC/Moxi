@@ -307,6 +307,58 @@
           ]
         }
       ]
+    },
+    "slime_rancher": {
+      "mods": [
+        {
+          "id": "sr_mod_lib",
+          "name": "Simple SR mod library (Core mod)",
+          "author": "Zion",
+          "version": "6.0.0",
+          "description": "A mod library designed to make basic mods easier and simpler to make.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SimpleSRmodLibrary.dll",
+              "filename": "SimpleSRmodLibrary.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "assets_lib",
+          "name": "Assets Lib",
+          "author": "Aidanamite",
+          "version": "1.2.6",
+          "description": "Adds various tools for doing assets related stuff",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/AssetsLib.dll",
+              "filename": "AssetsLib.dll",
+              "destination": "SRML/Mods"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/AssetsLib.xml",
+              "filename": "AssetsLib.xml",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "velocity_slimes",
+          "name": "Velocity Slimes",
+          "dependencies": ["sr_mod_lib", "assets_lib"],
+          "author": "Zion aka Kokoro",
+          "version": "0.1.tomato",
+          "description": "Adds various tools for doing assets related stuff",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VelocitySlimes.dll",
+              "filename": "VelocitySlimes.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        }
+      ]
     }
   }
 }
