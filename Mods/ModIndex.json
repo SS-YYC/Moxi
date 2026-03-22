@@ -254,8 +254,8 @@
           ]
         },
         {
-          "id": "bed_teleport_bz",
-          "name": "Bed Teleport BZ",
+          "id": "bed_teleport",
+          "name": "Bed Teleport",
           "dependencies": ["nautilus"],
           "author": "aedenthorn",
           "version": "0.4.0",
