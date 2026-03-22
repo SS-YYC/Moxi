@@ -252,13 +252,28 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "bed_teleport_bz",
+          "name": "Bed Teleport BZ",
+          "dependencies": ["nautilus"],
+          "author": "aedenthorn",
+          "version": "0.4.0",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport.dll",
+              "filename": "BedTeleport.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
     "subnautica_bz": {
       "mods": [
         {
-          "id": "nautilus",
+          "id": "nautilus_bz",
           "name": "Nautilus BZ",
           "author": "Subnautica Modding Organization",
           "version": "1.0.0-pre.49",
@@ -273,6 +288,21 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus/Nautilus.xml",
               "filename": "Nautilus.xml",
               "destination": "BepInEx/plugins/Nautilus"
+            }
+          ]
+        },
+        {
+          "id": "bed_teleport_bz",
+          "name": "Bed Teleport BZ",
+          "dependencies": ["nautilus_bz"],
+          "author": "aedenthorn",
+          "version": "0.3.2",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport_BZ.dll",
+              "filename": "BedTeleport_BZ.dll",
+              "destination": "BepInEx/plugins"
             }
           ]
         }
