@@ -86,6 +86,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "resource_scanner",
+          "name": "Resource Scanner",
+          "author": "Haedenthorn",
+          "version": "0.1.0",
+          "description": "Lets you scan for nearby resources, showing names of matched resources within range.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ResourceScan.dll",
+              "filename": "ResourceScan.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
