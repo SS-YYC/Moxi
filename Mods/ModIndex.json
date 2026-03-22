@@ -90,13 +90,27 @@
         {
           "id": "resource_scanner",
           "name": "Resource Scanner",
-          "author": "Haedenthorn",
+          "author": "aedenthorn",
           "version": "0.1.0",
           "description": "Lets you scan for nearby resources, showing names of matched resources within range.",
           "files": [
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ResourceScan.dll",
               "filename": "ResourceScan.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "better_jetpack",
+          "name": "Better Jetpack",
+          "author": "aedenthorn",
+          "version": "0.3.1",
+          "description": "Removes the sharp drop when jetpacking off a cliff, and adds a custom speed multiplier to the jetpack.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterJetPack.dll",
+              "filename": "BetterJetPack.dll",
               "destination": "BepInEx/plugins"
             }
           ]
