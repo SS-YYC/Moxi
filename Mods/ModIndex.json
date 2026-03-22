@@ -371,6 +371,20 @@
               "destination": "SRML/Mods"
             }
           ]
+        },
+        {
+          "id": "spore_slimes_remaster",
+          "name": "Spore Slimes REMASTER",
+          "author": "Regal",
+          "version": "6.1.0.0",
+          "description": "A mod that adds 2 unique slimes.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SporeSlime.dll",
+              "filename": "SporeSlime.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
         }
       ]
     }
