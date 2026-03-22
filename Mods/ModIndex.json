@@ -114,6 +114,34 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "spawn_objects",
+          "name": "Spawn Objects",
+          "author": "aedenthorn",
+          "version": "0.7.2",
+          "description": "Lets you spawn buildings and objects to the world using a GUI with auto-suggest.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SpawnObject.dll",
+              "filename": "SpawnObject.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "craft_from_containers",
+          "name": "Craft From Containers",
+          "author": "aedenthorn",
+          "version": "0.7.1",
+          "description": "Pulls items from nearby containers for construction purposes.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/CraftFromContainers.dll",
+              "filename": "CraftFromContainers.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
