@@ -17,8 +17,6 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Slime Rancher 2 | Supported |
 | Dyson Sphere Program | Coming March 25th |
 
-More games are added over time without requiring an app update.
-
 ---
 
 ## Features
