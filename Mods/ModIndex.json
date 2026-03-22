@@ -223,6 +223,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "mobile_resource_scanner",
+          "name": "Mobile Resource Scanner",
+          "author": "aedenthorn",
+          "version": "1.2.1",
+          "description": "Lets you craft an equipable chip to replicate scanner room functionality on-the-go.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/MobileResourceScanner.dll",
+              "filename": "MobileResourceScanner.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
