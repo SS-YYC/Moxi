@@ -167,6 +167,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "radial_tabs",
+          "name": "Radial Tabs",
+          "author": "MrPurple6411",
+          "version": "2.0.0.1",
+          "description": "Welcome to the world of circles.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RadialTabs.dll",
+              "filename": "RadialTabs.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
