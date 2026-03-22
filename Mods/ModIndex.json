@@ -138,6 +138,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "easycraft",
+          "name": "EasyCraft",
+          "author": "newman55",
+          "version": "1.1.6",
+          "description": "Automatically crafts ingredients for a blueprint and takes materials from the neighboring storage.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EasyCraft.dll",
+              "filename": "EasyCraft.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     }
