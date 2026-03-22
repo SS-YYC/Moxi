@@ -171,12 +171,12 @@
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus.dll",
               "filename": "Nautilus.dll",
-              "destination": "BepInEx/plugins"
+              "destination": "BepInEx/plugins/Nautlius"
             },
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus.xml",
               "filename": "Nautilus.xml",
-              "destination": "BepInEx/plugins"
+              "destination": "BepInEx/plugins/Nautilus"
             }
           ]
         },
@@ -249,6 +249,29 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/MobileResourceScanner.dll",
               "filename": "MobileResourceScanner.dll",
               "destination": "BepInEx/plugins"
+            }
+          ]
+        }
+      ]
+    },
+    "subnautica_bz": {
+      "mods": [
+        {
+          "id": "nautilus",
+          "name": "Nautilus BZ",
+          "author": "Subnautica Modding Organization",
+          "version": "1.0.0-pre.49",
+          "description": "Nautilus is the core Subnautica modding library that aims to enhance developer productivity by offering common helper utilities as easy to use and robust as possible.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus/Nautilus.dll",
+              "filename": "Nautilus.dll",
+              "destination": "BepInEx/plugins/Nautilus"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus/Nautilus.xml",
+              "filename": "Nautilus.xml",
+              "destination": "BepInEx/plugins/Nautilus"
             }
           ]
         }
