@@ -349,11 +349,25 @@
           "dependencies": ["sr_mod_lib", "assets_lib"],
           "author": "Zion aka Kokoro",
           "version": "0.1.tomato",
-          "description": "Adds various tools for doing assets related stuff",
+          "description": "Adds various tools for doing assets related stuff.",
           "files": [
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VelocitySlimes.dll",
               "filename": "VelocitySlimes.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "slimes_and_market_redux",
+          "name": "Slimes And Market Redux",
+          "author": "AlchlcSystm and FrostDracony",
+          "version": "1.6.2",
+          "description": "Sell slimes just like their plorts! Formerly made by FrostDracony, the original mod was left in a bugged state so here's a recoded and improved version!",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SlimesAndMarket.dll",
+              "filename": "SlimesAndMarket.dll",
               "destination": "SRML/Mods"
             }
           ]
