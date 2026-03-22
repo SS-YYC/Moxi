@@ -142,6 +142,20 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "custom_flashlight",
+          "name": "Custom Flashlight",
+          "author": "aedenthorn",
+          "version": "0.4.0",
+          "description": "Provides comprehensive light customization of the multitool flashlight.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/CustomFlashlight.dll",
+              "filename": "CustomFlashlight.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
