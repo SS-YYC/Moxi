@@ -127,4 +127,4 @@ Games listed in the Coming Soon section of the dashboard are managed through `Ga
 
 ## License
 
-This project is open source under the GNU v3 License. See the LICENSE file for details.
+This project is open source under the GPL-3.0 License. See the LICENSE file for details.
