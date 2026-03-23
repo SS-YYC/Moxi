@@ -1,6 +1,11 @@
 {
   "coming_soon": [
     {
+        "appid": "3164500",
+        "name": "Schedule I",
+        "coming_date": "March 23rd"
+    },
+    {
         "appid": "892970",
         "name": "Valheim",
         "coming_date": "March 24th"
@@ -33,6 +38,16 @@
     {
         "appid": "3527290",
         "name": "PEAK",
+        "coming_date": "TBD"
+    },
+    {
+        "appid": "1592190",
+        "name": "BONELAB",
+        "coming_date": "TBD"
+    },
+    {
+        "appid": "823500",
+        "name": "BONEWORKS",
         "coming_date": "TBD"
     },
     {
