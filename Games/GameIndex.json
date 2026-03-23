@@ -1,6 +1,11 @@
 {
   "coming_soon": [
     {
+        "appid": "892970",
+        "name": "Valheim",
+        "coming_date": "March 23rd"
+    },
+    {
       "appid": "2168680",
       "name": "Nuclear Option",
       "coming_date": "March 25th"
