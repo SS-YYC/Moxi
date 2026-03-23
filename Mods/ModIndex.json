@@ -461,6 +461,24 @@
           ]
         }
       ]
+    },
+    "schedule_i": {
+      "mods": [
+        {
+          "id": "drones_forked",
+          "name": "Drones by ThrustGoblin forked",
+          "author": "Created by ThrustGoblin Uploaded by Virtunerd",
+          "version": "1.1.0",
+          "description": "Updated version of the OG drones mod by ThrustGobling. Use drones to deliver product to customers, transfer items between properties, or pilot them yourself all with the drone app!",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Drones.dll",
+              "filename": "Drones.dll",
+              "destination": "Mods"
+            }
+          ]
+        }
+      ]
     }
   }
 }
