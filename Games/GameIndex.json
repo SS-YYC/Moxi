@@ -1,9 +1,19 @@
 {
   "coming_soon": [
     {
+        "appid": "3164500",
+        "name": "Schedule I",
+        "coming_date": "March 23rd"
+    },
+    {
         "appid": "892970",
         "name": "Valheim",
         "coming_date": "March 24th"
+    },
+    {
+        "appid": "632360",
+        "name": "Risk of Rain 2",
+        "coming_date": "March 25th"
     },
     {
       "appid": "2168680",
@@ -11,14 +21,14 @@
       "coming_date": "March 25th"
     },
     {
+        "appid": "1966720",
+        "name": "Lethal Company",
+        "coming_date": "March 26th"
+    },
+    {
       "appid": "361420",
       "name": "Astroneer",
       "coming_date": "TBD"
-    },
-    {
-        "appid": "632360",
-        "name": "Risk of Rain 2",
-        "coming_date": "TBD"
     },
     {
         "appid": "1625450",
