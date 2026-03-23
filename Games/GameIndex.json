@@ -3,7 +3,12 @@
     {
         "appid": "892970",
         "name": "Valheim",
-        "coming_date": "March 24th"
+        "coming_date": "March 23rd"
+    },
+    {
+        "appid": "387990",
+        "name": "Scrap Mechanic",
+        "coming_date": "March 23rd"
     },
     {
         "appid": "632360",
@@ -48,11 +53,6 @@
     {
         "appid": "275850",
         "name": "No Man's Sky",
-        "coming_date": "TBD"
-    },
-    {
-        "appid": "387990",
-        "name": "Scrap Mechanic",
         "coming_date": "TBD"
     }
   ]
