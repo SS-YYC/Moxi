@@ -1,14 +1,14 @@
 {
   "coming_soon": [
     {
-      "appid": "361420",
-      "name": "Astroneer",
-      "coming_date": "March 23rd"
-    },
-    {
       "appid": "2168680",
       "name": "Nuclear Option",
       "coming_date": "March 25th"
+    },
+    {
+      "appid": "361420",
+      "name": "Astroneer",
+      "coming_date": "TBD"
     },
     {
         "appid": "632360",
