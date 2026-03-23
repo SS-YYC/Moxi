@@ -61,12 +61,25 @@ MODLOADER_CONFIGS = {
         "check_path": os.path.join("BepInEx", "core", "BepInEx.dll"),
         "mod_dest":   os.path.join("BepInEx", "plugins"),
     },
+    "schedule_i": {
+        "type":       "github_latest",
+        "repo":       "LavaGang/MelonLoader",
+        "asset":      "MelonLoader.x64.zip",
+        "asset_x86":  "MelonLoader.x86.zip",
+        "check_path": "MelonLoader",
+        "mod_dest":   "Mods",
+        "arch_detect": True,
+    },
 }
 
 THUNDERSTORE_CONFIGS = {
     "dyson_sphere": {
         "community": "dyson-sphere-program",
         "mod_dest":  os.path.join("BepInEx", "plugins"),
+    },
+    "schedule_i": {
+        "community": "schedule-i",
+        "mod_dest":  "Mods",
     },
 }
 

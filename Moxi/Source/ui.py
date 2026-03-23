@@ -17,19 +17,27 @@ SUPPORTED_GAMES = {
     "433340":  {"name": "Slime Rancher",          "supported": True, "game_key": "slime_rancher"},
     "1657630": {"name": "Slime Rancher 2",        "supported": True, "game_key": "slime_rancher_2"},
     "1366540": {"name": "Dyson Sphere Program",   "supported": True, "game_key": "dyson_sphere"},
+    "3164500": {"name": "Schedule I",              "supported": True, "game_key": "schedule_i"},
 }
 
 CUSTOM_ART_URLS = {
     "3527290": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3527290/31bac6b2eccf09b368f5e95ce510bae2baf3cfcd/header.jpg?t=1773856924",
 }
 
-THUNDERSTORE_GAMES = {"dyson_sphere"}
+THUNDERSTORE_GAMES = {"dyson_sphere", "schedule_i"}
+
+NEWLY_ADDED = {"dyson_sphere", "schedule_i"}
+
+THUNDERSTORE_BLOCKLIST = {
+    "schedule_i":  {"LavaGang-MelonLoader", "ebkr-r2modman"},
+    "dyson_sphere": {"ebkr-r2modman", "xiaoye97-BepInEx", "CapsaicinBunny-BepInEx_LTS"},
+}
 
 GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values()}
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "1.1.2"
+MOXI_VERSION = "1.2.0"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -494,6 +502,7 @@ class MoxiApp(ctk.CTk):
         newly = [
             {"appid": appid, "name": v["name"], "supported": v["supported"], "game_key": v["game_key"]}
             for appid, v in SUPPORTED_GAMES.items()
+            if v["game_key"] in NEWLY_ADDED
         ]
         self._build_section(scroll, "Newly Added to Moxi", newly)
 
@@ -1093,7 +1102,8 @@ class MoxiApp(ctk.CTk):
                                 self._active_frame.after(0, lambda: _load_mods(gn))
                         threading.Thread(target=_fetch, daemon=True).start()
                     return
-                ts_only = [m for m in ts_cached if m["id"] not in curated_ids]
+                blocked  = THUNDERSTORE_BLOCKLIST.get(game_key, set())
+                ts_only = [m for m in ts_cached if m["id"] not in curated_ids and m["id"] not in blocked]
                 all_mods = curated + ts_only
             else:
                 all_mods = curated
@@ -1106,6 +1116,33 @@ class MoxiApp(ctk.CTk):
                 return
 
             _go_page(0)
+
+            if game_key == "schedule_i":
+                for w in notif_bar.winfo_children():
+                    w.destroy()
+                notif_bar.configure(height=40)
+                notif_bar.pack_propagate(False)
+                bar = ctk.CTkFrame(notif_bar, fg_color="#0a0f1a", corner_radius=0)
+                bar.pack(fill="both", expand=True)
+                ctk.CTkLabel(
+                    bar,
+                    text="⚠  Schedule I mods require the \"alternate\" Steam beta branch (Mono). Right-click the game → Properties → Betas.",
+                    font=ctk.CTkFont(family="Segoe UI", size=11),
+                    text_color="#4a9eff", anchor="w"
+                ).pack(side="left", padx=14)
+                def _dismiss_schedule_warning():
+                    for w in notif_bar.winfo_children():
+                        w.destroy()
+                    notif_bar.configure(height=0)
+                    notif_bar.pack_propagate(False)
+                ctk.CTkButton(
+                    bar, text="Got it",
+                    font=ctk.CTkFont(family="Segoe UI", size=10),
+                    fg_color="transparent", hover_color="#0a1a2a",
+                    text_color="#666666", corner_radius=4,
+                    border_width=0, width=70, height=26,
+                    command=_dismiss_schedule_warning
+                ).pack(side="right", padx=(0, 10))
 
         def _reload(game_name, force=False):
             if self._index_loading:
