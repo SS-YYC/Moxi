@@ -1,5 +1,9 @@
 # Moxi
 
+<img width="1024" height="1024" alt="MoxiLogo" src="https://github.com/user-attachments/assets/bafad4ee-7787-431a-90fc-c035537c36b6" />
+
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/KerbalMissile/Moxi/total?style=flat&label=Total%20Downloads%3A%20&labelColor=%23111111&color=%23FF0051)
+
 A lightweight mod manager for PC games. No accounts, no ads, no bloat. Just install mods and play.
 
 Moxi detects your Steam games automatically, pulls mods from a curated index, handles dependencies, and installs everything in the right place. If a game needs a mod loader like BepInEx, Moxi installs that too.
