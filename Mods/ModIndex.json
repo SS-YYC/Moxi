@@ -184,6 +184,34 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "show_next_unlockables",
+          "name": "Show Next Unlockables",
+          "author": "aedenthorn",
+          "version": "0.2.4",
+          "description": "Shows the next unlockable goal for each unit type on the progress display monitor.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ShowNextUnlockableGoal.dll",
+              "filename": "ShowNextUnlockableGoal.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "grid_snap",
+          "name": "Grid Snap",
+          "author": "Valriz",
+          "version": "1.4.3",
+          "description": "Build anything either on or off the snapping build grid, and exactly where you want it without pesky collisions or rotation rules getting in your way. Rotate items and build on any rotation.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/GridSnap.dll",
+              "filename": "GridSnap.dll",
+              "destination": "BepInEx/plugins/Valriz-GridSnap"
+            }
+          ]
         }
       ]
     },
