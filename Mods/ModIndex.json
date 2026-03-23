@@ -489,6 +489,11 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterStacks.dll",
               "filename": "BetterStacks.dll",
               "destination": "Mods"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterStackConfigs.json",
+              "filename": "BetterStackConfig.json",
+              "destination": "Mods"
             }
           ]
         }
