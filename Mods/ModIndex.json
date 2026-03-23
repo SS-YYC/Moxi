@@ -429,6 +429,24 @@
           ]
         }
       ]
+    },
+    "slime_rancher_2": {
+      "mods": [
+        {
+          "id": "vacuum_modifications",
+          "name": "Vacuum Modifications",
+          "author": "BreadCh4n",
+          "version": "2.2.4",
+          "description": "This mod allows you to customize the limits of the storage containers and your vacuum to your liking.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VacuumModifications.dll",
+              "filename": "VacuumModifications.dll",
+              "destination": "Mods"
+            }
+          ]
+        }
+      ]
     }
   }
 }
