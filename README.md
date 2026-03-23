@@ -1,8 +1,6 @@
-# Moxi
+# Moxi ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/KerbalMissile/Moxi/total?style=flat&label=Total%20Downloads%3A%20&labelColor=%23111111&color=%23FF0051)
 
 <img width="512" height="512" alt="MoxiLogo" src="https://github.com/user-attachments/assets/bafad4ee-7787-431a-90fc-c035537c36b6" />
-
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/KerbalMissile/Moxi/total?style=flat&label=Total%20Downloads%3A%20&labelColor=%23111111&color=%23FF0051)
 
 A lightweight mod manager for PC games. No accounts, no ads, no bloat. Just install mods and play.
 
