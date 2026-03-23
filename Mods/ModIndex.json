@@ -477,6 +477,20 @@
               "destination": "Mods"
             }
           ]
+        },
+        {
+          "id": "better_stacks",
+          "name": "Better Stacks",
+          "author": "zarnes",
+          "version": "1.0.0",
+          "description": "This mod allow the player to multiply the stack limit per category of items.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterStacks.dll",
+              "filename": "BetterStacks.dll",
+              "destination": "Mods"
+            }
+          ]
         }
       ]
     }
