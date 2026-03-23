@@ -445,6 +445,20 @@
               "destination": "Mods"
             }
           ]
+        },
+        {
+          "id": "interpolator",
+          "name": "Interpolator",
+          "author": "PieKing1215",
+          "version": "1.0.0",
+          "description": "Fixes choppy/low fps physics objects & first person vac animation.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SR2Interpolator.dll",
+              "filename": "SR2Interpolator.dll",
+              "destination": "Mods"
+            }
+          ]
         }
       ]
     }
