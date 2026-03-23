@@ -7,7 +7,7 @@
           "id": "no_version_number",
           "name": "No Version Number",
           "author": "dazawmbie",
-          "version": "1.1",
+          "version": "1.2",
           "description": "Removes the version number on the HUD.",
           "files": [
             {
