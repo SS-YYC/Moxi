@@ -29,7 +29,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "1.1.1"
+MOXI_VERSION = "1.1.2"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -838,7 +838,7 @@ class MoxiApp(ctk.CTk):
 
     def _build_mod_database(self, parent):
         PAGE_SIZE = 20
-        state     = {"page": 0, "all_mods": [], "game_key": "", "search_after": None}
+        state     = {"page": 0, "all_mods": [], "game_key": "", "search_after": None, "suppress_search": False}
 
         toolbar = ctk.CTkFrame(parent, fg_color=NAV_BG, height=54, corner_radius=0)
         toolbar.pack(fill="x")
@@ -987,6 +987,8 @@ class MoxiApp(ctk.CTk):
             _render_page(sliced, game_key)
 
         def _do_search(*_):
+            if state["suppress_search"]:
+                return
             if state["search_after"] is not None:
                 try:
                     list_container.after_cancel(state["search_after"])
@@ -1053,7 +1055,9 @@ class MoxiApp(ctk.CTk):
             state["page"]     = 0
             state["game_key"] = game_key
             state["all_mods"] = []
+            state["suppress_search"] = True
             search_var.set("")
+            state["suppress_search"] = False
             pager.pack(fill="x", side="bottom")
             _clear_list()
 
