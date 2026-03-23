@@ -156,6 +156,34 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "zoom",
+          "name": "Zoom",
+          "author": "bknibb",
+          "version": "1.0.0",
+          "description": "Lets you zoom in similar to minecraft zoom mods.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PlanetCrafterZoom.dll",
+              "filename": "PlanetCrafterZoom.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "player_tracker",
+          "name": "Player Tracker",
+          "author": "bknibb",
+          "version": "1.2.0",
+          "description": "Adds a beacon like tracker to players on the map and in 3d (map tracker is disabled by default).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PlanetCrafterPlayerTracker.dll",
+              "filename": "PlanetCrafterPlayerTracker.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
@@ -303,6 +331,34 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport_BZ.dll",
               "filename": "BedTeleport_BZ.dll",
               "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "enable_achievements",
+          "name": "Enable Achievements",
+          "author": "TLG53787",
+          "version": "1.0.0",
+          "description": "Allows you to earn achievements while using console commands or custom game modes.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EnableAchievements.dll",
+              "filename": "EnableAchievements.dll",
+              "destination": "BepInEx/plugins/EnableAchievements"
+            }
+          ]
+        },
+        {
+          "id": "enable_achievements",
+          "name": "Enable Achievements",
+          "author": "TLG53787",
+          "version": "1.0.0",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EnableAchievements.dll",
+              "filename": "EnableAchievements.dll",
+              "destination": "BepInEx/plugins/EnableAchievements"
             }
           ]
         }
