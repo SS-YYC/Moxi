@@ -349,7 +349,7 @@
           "dependencies": ["sr_mod_lib", "assets_lib"],
           "author": "Zion aka Kokoro",
           "version": "0.1.tomato",
-          "description": "Adds various tools for doing assets related stuff.",
+          "description": "This mod adds slimes with various abilities of velocity manipulation, along with some fun items that somewhat fit the theme.",
           "files": [
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VelocitySlimes.dll",
