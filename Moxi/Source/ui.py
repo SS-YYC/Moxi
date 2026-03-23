@@ -16,13 +16,20 @@ SUPPORTED_GAMES = {
     "848450":  {"name": "Subnautica: Below Zero", "supported": True, "game_key": "subnautica_bz"},
     "433340":  {"name": "Slime Rancher",          "supported": True, "game_key": "slime_rancher"},
     "1657630": {"name": "Slime Rancher 2",        "supported": True, "game_key": "slime_rancher_2"},
+    "1366540": {"name": "Dyson Sphere Program",   "supported": True, "game_key": "dyson_sphere"},
 }
+
+CUSTOM_ART_URLS = {
+    "3527290": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3527290/31bac6b2eccf09b368f5e95ce510bae2baf3cfcd/header.jpg?t=1773856924",
+}
+
+THUNDERSTORE_GAMES = {"dyson_sphere"}
 
 GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values()}
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "1.0.0"
+MOXI_VERSION = "1.1.1"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -110,6 +117,9 @@ class MoxiApp(ctk.CTk):
         self._game_index          = {}
         self._coming_soon_row     = None
         self._pending_update      = None
+        self._news_cache          = None
+        self._thunderstore_cache  = {}
+        self._ts_loading          = set()
 
         self._load_logo()
         self._build_topbar()
@@ -464,8 +474,20 @@ class MoxiApp(ctk.CTk):
         return coming
 
     def _build_dashboard(self, parent):
-        scroll = ctk.CTkScrollableFrame(parent, fg_color=BG, corner_radius=0)
-        scroll.pack(fill="both", expand=True)
+        body = ctk.CTkFrame(parent, fg_color=BG, corner_radius=0)
+        body.pack(fill="both", expand=True)
+
+        sidebar = ctk.CTkFrame(body, fg_color=NAV_BG, corner_radius=0, width=220)
+        sidebar.pack(side="left", fill="y")
+        sidebar.pack_propagate(False)
+
+        self._build_sidebar(sidebar)
+
+        divider = ctk.CTkFrame(body, fg_color="#1e1e1e", corner_radius=0, width=1)
+        divider.pack(side="left", fill="y")
+
+        scroll = ctk.CTkScrollableFrame(body, fg_color=BG, corner_radius=0)
+        scroll.pack(side="left", fill="both", expand=True)
 
         self._recently_played_row = self._build_section(scroll, "Recently Played", self._recently_played if self._recently_played else [])
 
@@ -480,6 +502,128 @@ class MoxiApp(ctk.CTk):
 
         self._detected_inner = self._build_section(scroll, "Detected Supported Games", None)
         self._populate_detected_cards()
+
+    def _build_sidebar(self, parent):
+        def section_label(text):
+            ctk.CTkLabel(
+                parent, text=text.upper(),
+                font=ctk.CTkFont(family="Segoe UI", size=9, weight="bold"),
+                text_color="#444444", anchor="w"
+            ).pack(anchor="w", padx=16, pady=(16, 4))
+
+        def divider():
+            ctk.CTkFrame(parent, fg_color="#1e1e1e", height=1, corner_radius=0).pack(fill="x", padx=12, pady=(0, 8))
+
+        section_label("Stats")
+        divider()
+
+        total_installed = sum(
+            len(v) for v in self._mod_manager.installed.values()
+        )
+
+        stat_rows = {}
+        for label in ("Mods Installed", "Games Detected"):
+            row = ctk.CTkFrame(parent, fg_color="transparent")
+            row.pack(fill="x", padx=16, pady=2)
+            ctk.CTkLabel(
+                row, text=label,
+                font=ctk.CTkFont(family="Segoe UI", size=11),
+                text_color=TEXT_DIM, anchor="w"
+            ).pack(side="left")
+            val_lbl = ctk.CTkLabel(
+                row, text="...",
+                font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                text_color=TEXT_ON, anchor="e"
+            )
+            val_lbl.pack(side="right")
+            stat_rows[label] = val_lbl
+
+        def _update_stats():
+            try:
+                stat_rows["Mods Installed"].configure(
+                    text=str(sum(len(v) for v in self._mod_manager.installed.values()))
+                )
+                stat_rows["Games Detected"].configure(
+                    text=str(len(self._detected))
+                )
+            except Exception:
+                pass
+
+        _update_stats()
+        self._sidebar_update_stats = _update_stats
+
+        if self._mod_manager.installed:
+            section_label("Mods Per Game")
+            divider()
+            for game_key, mods in self._mod_manager.installed.items():
+                if not mods:
+                    continue
+                game_name = GAME_KEY_TO_NAME.get(game_key, game_key.replace("_", " ").title())
+                row = ctk.CTkFrame(parent, fg_color="transparent")
+                row.pack(fill="x", padx=16, pady=2)
+                ctk.CTkLabel(
+                    row, text=game_name,
+                    font=ctk.CTkFont(family="Segoe UI", size=11),
+                    text_color=TEXT_DIM, anchor="w",
+                    wraplength=140
+                ).pack(side="left")
+                ctk.CTkLabel(
+                    row, text=str(len(mods)),
+                    font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                    text_color=ACCENT, anchor="e"
+                ).pack(side="right")
+
+        section_label("News")
+        divider()
+
+        news_frame = ctk.CTkScrollableFrame(parent, fg_color="transparent", corner_radius=0)
+        news_frame.pack(fill="both", expand=True, padx=0)
+
+        loading_lbl = ctk.CTkLabel(
+            news_frame, text="Loading...",
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            text_color="#444444"
+        )
+        loading_lbl.pack(pady=12)
+
+        def _load_news():
+            if self._news_cache is not None:
+                _render_news(self._news_cache)
+                return
+            try:
+                r = requests.get(
+                    f"https://api.github.com/repos/{MOXI_REPO}/releases",
+                    timeout=8
+                )
+                r.raise_for_status()
+                self._news_cache = r.json()
+                news_frame.after(0, lambda: _render_news(self._news_cache))
+            except Exception:
+                news_frame.after(0, lambda: loading_lbl.configure(text="Failed to load news."))
+
+        def _render_news(releases):
+            try:
+                loading_lbl.destroy()
+            except Exception:
+                pass
+            for release in releases[:5]:
+                tag  = release.get("tag_name", "")
+                body = release.get("body", "No changelog provided.") or "No changelog provided."
+                card = ctk.CTkFrame(news_frame, fg_color="#141414", corner_radius=6)
+                card.pack(fill="x", padx=10, pady=(0, 8))
+                ctk.CTkLabel(
+                    card, text=f"Moxi {tag}",
+                    font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
+                    text_color=ACCENT, anchor="w"
+                ).pack(anchor="w", padx=10, pady=(8, 2))
+                ctk.CTkLabel(
+                    card, text=body,
+                    font=ctk.CTkFont(family="Segoe UI", size=10),
+                    text_color=TEXT_DIM, anchor="w",
+                    wraplength=170, justify="left"
+                ).pack(anchor="w", padx=10, pady=(0, 8))
+
+        threading.Thread(target=_load_news, daemon=True).start()
 
     def _build_section(self, parent, title, games):
         wrapper = ctk.CTkFrame(parent, fg_color=BG, corner_radius=0)
@@ -672,7 +816,7 @@ class MoxiApp(ctk.CTk):
             pass
 
     def _fetch_cdn_art(self, appid):
-        url = f"https://steamcdn-a.akamaihd.net/steam/apps/{appid}/header.jpg"
+        url = CUSTOM_ART_URLS.get(str(appid)) or f"https://steamcdn-a.akamaihd.net/steam/apps/{appid}/header.jpg"
         try:
             r = requests.get(url, timeout=6)
             if r.status_code == 200:
@@ -689,8 +833,13 @@ class MoxiApp(ctk.CTk):
         self._detected_map = {g["game_key"]: g for g in results}
         if self._active_frame:
             self._active_frame.after(0, self._render_detected_cards)
+            if hasattr(self, "_sidebar_update_stats"):
+                self._active_frame.after(0, self._sidebar_update_stats)
 
     def _build_mod_database(self, parent):
+        PAGE_SIZE = 20
+        state     = {"page": 0, "all_mods": [], "game_key": "", "search_after": None}
+
         toolbar = ctk.CTkFrame(parent, fg_color=NAV_BG, height=54, corner_radius=0)
         toolbar.pack(fill="x")
         toolbar.pack_propagate(False)
@@ -728,16 +877,23 @@ class MoxiApp(ctk.CTk):
         refresh_btn = ctk.CTkButton(
             toolbar, text="Refresh",
             font=ctk.CTkFont(family="Segoe UI", size=12),
-            fg_color="#1e1e1e",
-            hover_color="#2a2a2a",
-            text_color=TEXT_DIM,
-            corner_radius=6,
-            border_width=0,
-            width=80, height=30,
+            fg_color="#1e1e1e", hover_color="#2a2a2a",
+            text_color=TEXT_DIM, corner_radius=6,
+            border_width=0, width=80, height=30,
             command=lambda: _do_refresh()
         )
         refresh_btn.pack(side="right", padx=(0, 16), pady=12)
         _glow_on_hover(refresh_btn, targets=[refresh_btn], is_btn=True)
+
+        search_var = ctk.StringVar()
+        search_entry = ctk.CTkEntry(
+            toolbar, textvariable=search_var,
+            placeholder_text="Search mods...",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            fg_color="#1e1e1e", border_color="#2a2a2a",
+            text_color=TEXT_ON, width=200, height=30
+        )
+        search_entry.pack(side="left", padx=(12, 0), pady=12)
 
         ctk.CTkFrame(parent, fg_color="#1e1e1e", height=1, corner_radius=0).pack(fill="x")
 
@@ -748,72 +904,235 @@ class MoxiApp(ctk.CTk):
         list_container = ctk.CTkScrollableFrame(parent, fg_color=BG, corner_radius=0)
         list_container.pack(fill="both", expand=True)
 
-        def _render(game_name):
+        pager = ctk.CTkFrame(parent, fg_color=NAV_BG, height=40, corner_radius=0)
+        pager.pack(fill="x", side="bottom")
+        pager.pack_propagate(False)
+
+        prev_btn = ctk.CTkButton(
+            pager, text="< Prev",
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            fg_color="transparent", hover_color="#1e1e1e",
+            text_color=TEXT_DIM, corner_radius=4,
+            border_width=0, width=70, height=28,
+            command=lambda: _go_page(state["page"] - 1)
+        )
+        prev_btn.pack(side="left", padx=12, pady=6)
+        _glow_on_hover(prev_btn, targets=[prev_btn], is_btn=True)
+
+        page_lbl = ctk.CTkLabel(
+            pager, text="",
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            text_color=TEXT_DIM
+        )
+        page_lbl.pack(side="left", padx=8)
+
+        next_btn = ctk.CTkButton(
+            pager, text="Next >",
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            fg_color="transparent", hover_color="#1e1e1e",
+            text_color=TEXT_DIM, corner_radius=4,
+            border_width=0, width=70, height=28,
+            command=lambda: _go_page(state["page"] + 1)
+        )
+        next_btn.pack(side="left", padx=0, pady=6)
+        _glow_on_hover(next_btn, targets=[next_btn], is_btn=True)
+
+        def _clear_list():
             for w in list_container.winfo_children():
                 w.destroy()
 
+        def _show_message(text):
+            _clear_list()
+            ctk.CTkLabel(
+                list_container, text=text,
+                font=ctk.CTkFont(family="Segoe UI", size=14),
+                text_color=TEXT_DIM
+            ).pack(pady=60)
+
+        def _render_page(mods_slice, game_key):
+            _clear_list()
+            list_container.update_idletasks()
+
+            def _batch(items, start=0):
+                if not list_container.winfo_exists():
+                    return
+                for mod in items[start:start + 10]:
+                    installed = self._mod_manager.is_installed(game_key, mod["id"])
+                    self._make_mod_row(list_container, mod, game_key, installed, notif_bar,
+                                       on_install_done=lambda gn=game_var.get(): _reload(gn))
+                if start + 10 < len(items):
+                    list_container.after(40, lambda s=start+10: _batch(items, s))
+
+            list_container.after(80, lambda: _batch(mods_slice))
+
+        def _go_page(page):
+            all_mods  = state["all_mods"]
+            game_key  = state["game_key"]
+            total     = len(all_mods)
+            max_page  = max(0, (total - 1) // PAGE_SIZE)
+            page      = max(0, min(page, max_page))
+            state["page"] = page
+
+            start  = page * PAGE_SIZE
+            end    = start + PAGE_SIZE
+            sliced = all_mods[start:end]
+
+            status_lbl.configure(text=f"{total} mod{'s' if total != 1 else ''}")
+            page_lbl.configure(text=f"Page {page + 1} of {max_page + 1}")
+            prev_btn.configure(state="normal" if page > 0 else "disabled",
+                               text_color=TEXT_DIM if page > 0 else "#333333")
+            next_btn.configure(state="normal" if page < max_page else "disabled",
+                               text_color=TEXT_DIM if page < max_page else "#333333")
+
+            _render_page(sliced, game_key)
+
+        def _do_search(*_):
+            if state["search_after"] is not None:
+                try:
+                    list_container.after_cancel(state["search_after"])
+                except Exception:
+                    pass
+            state["search_after"] = list_container.after(300, _apply_search)
+
+        def _mod_keywords(mod):
+            words = set()
+            name = mod.get("name", "")
+            for w in name.lower().split():
+                words.add(w.strip(".,!?-"))
+            mod_id = mod.get("id", "")
+            for part in mod_id.lower().replace("-", "_").split("_"):
+                if part:
+                    words.add(part)
+            for tag in mod.get("tags", []):
+                words.add(tag.lower())
+            return words
+
+        def _apply_search():
+            state["search_after"] = None
+            query    = search_var.get().strip().lower()
+            game_key = state["game_key"]
+
+            if not query:
+                pager.pack(fill="x", side="bottom")
+                _go_page(0)
+                return
+
+            terms    = query.split()
+            all_mods = state["all_mods"]
+            results  = []
+
+            for m in all_mods:
+                keywords = _mod_keywords(m)
+                blob     = " ".join([
+                    m.get("name", ""),
+                    m.get("author", ""),
+                    m.get("description", ""),
+                    m.get("id", "").replace("_", " ").replace("-", " "),
+                ]).lower()
+                if all(
+                    any(t in kw for kw in keywords) or t in blob
+                    for t in terms
+                ):
+                    results.append(m)
+
+            pager.pack_forget()
+            status_lbl.configure(text=f"{len(results)} result{'s' if len(results) != 1 else ''}")
+            page_lbl.configure(text="")
+
+            if not results:
+                _show_message("No mods found.")
+                return
+
+            _render_page(results, game_key)
+
+        def _load_mods(game_name):
             game_info = next((v for v in SUPPORTED_GAMES.values() if v["name"] == game_name), {})
             game_key  = game_info.get("game_key", "")
             supported = game_info.get("supported", False)
 
+            state["page"]     = 0
+            state["game_key"] = game_key
+            state["all_mods"] = []
+            search_var.set("")
+            pager.pack(fill="x", side="bottom")
+            _clear_list()
+
             if not supported:
                 status_lbl.configure(text="")
-                ctk.CTkLabel(
-                    list_container,
-                    text=f"{game_name} is not yet supported.",
-                    font=ctk.CTkFont(family="Segoe UI", size=14),
-                    text_color=TEXT_DIM
-                ).pack(pady=60)
+                _show_message(f"{game_name} is not yet supported.")
                 return
 
             if not self._mod_index:
                 status_lbl.configure(text="Failed to load index.")
-                ctk.CTkLabel(
-                    list_container,
-                    text="Could not load mod index. Press Refresh to try again.",
-                    font=ctk.CTkFont(family="Segoe UI", size=14),
-                    text_color=TEXT_DIM
-                ).pack(pady=60)
+                _show_message("Could not load mod index. Press Refresh to try again.")
                 return
 
-            mods = self._mod_index.get("games", {}).get(game_key, {}).get("mods", [])
+            curated_raw = self._mod_index.get("games", {}).get(game_key, {}).get("mods", [])
+            curated     = [{**m, "source": "curated"} for m in curated_raw]
+            curated_ids = {m["id"] for m in curated}
 
-            if not mods:
+            if game_key in THUNDERSTORE_GAMES:
+                ts_cached = self._thunderstore_cache.get(game_key)
+                if ts_cached is None:
+                    if game_key not in self._ts_loading:
+                        self._ts_loading.add(game_key)
+                        status_lbl.configure(text="Loading Thunderstore...")
+                        _show_message("Fetching mods from Thunderstore...")
+                        def _fetch(gk=game_key, gn=game_name):
+                            try:
+                                pkgs = self._mod_manager.fetch_thunderstore_packages(gk)
+                                self._thunderstore_cache[gk] = pkgs
+                            except Exception:
+                                self._thunderstore_cache[gk] = []
+                            self._ts_loading.discard(gk)
+                            if self._active_frame and state["game_key"] == gk:
+                                self._active_frame.after(0, lambda: _load_mods(gn))
+                        threading.Thread(target=_fetch, daemon=True).start()
+                    return
+                ts_only = [m for m in ts_cached if m["id"] not in curated_ids]
+                all_mods = curated + ts_only
+            else:
+                all_mods = curated
+
+            state["all_mods"] = all_mods
+
+            if not all_mods:
                 status_lbl.configure(text="0 mods")
-                ctk.CTkLabel(
-                    list_container,
-                    text="No mods available yet for this game.",
-                    font=ctk.CTkFont(family="Segoe UI", size=14),
-                    text_color=TEXT_DIM
-                ).pack(pady=60)
+                _show_message("No mods available yet for this game.")
                 return
 
-            status_lbl.configure(text=f"{len(mods)} mod{'s' if len(mods) != 1 else ''}")
-            for mod in mods:
-                installed = self._mod_manager.is_installed(game_key, mod["id"])
-                self._make_mod_row(list_container, mod, game_key, installed, notif_bar,
-                                   on_install_done=lambda gn=game_var.get(): _render(gn))
+            _go_page(0)
 
-        def _reload(game_name):
+        def _reload(game_name, force=False):
             if self._index_loading:
                 status_lbl.configure(text="Loading...")
                 self.after(400, lambda: _reload(game_name))
                 return
-            _render(game_name)
+            if (not force
+                    and state["game_key"] == next((v["game_key"] for v in SUPPORTED_GAMES.values() if v["name"] == game_name), "")
+                    and state["all_mods"]):
+                return
+            _load_mods(game_name)
 
         def _do_refresh():
             if self._index_loading:
                 return
             refresh_btn.configure(text="Refreshing...", state="disabled")
             status_lbl.configure(text="")
+            game_key_now = next((v["game_key"] for v in SUPPORTED_GAMES.values()
+                                 if v["name"] == game_var.get()), "")
+            if game_key_now in self._thunderstore_cache:
+                del self._thunderstore_cache[game_key_now]
+            state["all_mods"] = []
 
             def on_done():
                 current_game = game_var.get()
                 refresh_btn.after(0, lambda: refresh_btn.configure(text="Refresh", state="normal"))
-                refresh_btn.after(0, lambda: _render(current_game))
+                refresh_btn.after(0, lambda: _load_mods(current_game))
 
             threading.Thread(target=self._do_fetch_index, args=(on_done,), daemon=True).start()
 
+        search_var.trace_add("write", _do_search)
         _reload(self._selected_game)
 
     def _make_mod_row(self, parent, mod, game_key, installed, notif_bar=None, on_install_done=None):
@@ -844,6 +1163,20 @@ class MoxiApp(ctk.CTk):
             font=ctk.CTkFont(family="Segoe UI", size=11),
             text_color="#666666", anchor="w"
         ).pack(side="left", padx=(10, 0))
+
+        source = mod.get("source", "curated")
+        if source == "thunderstore":
+            ctk.CTkLabel(
+                top_line, text="Thunderstore",
+                font=ctk.CTkFont(family="Segoe UI", size=10),
+                text_color="#4a9eff", anchor="w"
+            ).pack(side="left", padx=(10, 0))
+        elif source == "curated":
+            ctk.CTkLabel(
+                top_line, text="Curated",
+                font=ctk.CTkFont(family="Segoe UI", size=10),
+                text_color=ACCENT, anchor="w"
+            ).pack(side="left", padx=(10, 0))
 
         ctk.CTkLabel(
             left, text=mod.get("description", ""),
@@ -1134,7 +1467,10 @@ class MoxiApp(ctk.CTk):
                             pass
 
                     try:
-                        self._mod_manager.install_mod(game_key, current_mod, install_dir2, progress_cb)
+                        if current_mod.get("source") == "thunderstore":
+                            self._mod_manager.install_mod_thunderstore(game_key, current_mod, install_dir2, progress_cb)
+                        else:
+                            self._mod_manager.install_mod(game_key, current_mod, install_dir2, progress_cb)
                     except Exception:
                         progress_bar.after(0, progress_bar.pack_forget)
                         status_lbl.after(0, lambda n=name: status_lbl.configure(

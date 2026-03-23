@@ -55,6 +55,19 @@ MODLOADER_CONFIGS = {
         "mod_dest":   "Mods",
         "arch_detect": True,
     },
+    "dyson_sphere": {
+        "type":       "static",
+        "url":        "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip",
+        "check_path": os.path.join("BepInEx", "core", "BepInEx.dll"),
+        "mod_dest":   os.path.join("BepInEx", "plugins"),
+    },
+}
+
+THUNDERSTORE_CONFIGS = {
+    "dyson_sphere": {
+        "community": "dyson-sphere-program",
+        "mod_dest":  os.path.join("BepInEx", "plugins"),
+    },
 }
 
 
@@ -157,6 +170,105 @@ class ModManager:
         r = requests.get(GAME_INDEX_URL, timeout=10)
         r.raise_for_status()
         return r.json()
+
+    def fetch_thunderstore_packages(self, game_key):
+        cfg = THUNDERSTORE_CONFIGS.get(game_key)
+        if not cfg:
+            return []
+        community = cfg["community"]
+        mods      = []
+        page      = 1
+
+        while True:
+            url = f"https://thunderstore.io/c/{community}/api/v1/package/?page={page}"
+            r   = requests.get(url, timeout=15)
+            if r.status_code == 404:
+                break
+            r.raise_for_status()
+            data     = r.json()
+            packages = data if isinstance(data, list) else data.get("results", [])
+
+            for pkg in packages:
+                if pkg.get("is_deprecated"):
+                    continue
+                versions = pkg.get("versions", [])
+                if not versions:
+                    continue
+                latest = versions[0]
+                deps   = []
+                for dep in latest.get("dependencies", []):
+                    parts = dep.split("-")
+                    if len(parts) >= 2:
+                        deps.append(f"{parts[0]}-{parts[1]}")
+                mods.append({
+                    "id":          f"{pkg['owner']}-{pkg['name']}",
+                    "name":        pkg["name"],
+                    "author":      pkg["owner"],
+                    "version":     latest["version_number"],
+                    "description": latest.get("description", ""),
+                    "download_url": latest["download_url"],
+                    "dependencies": deps,
+                    "source":      "thunderstore",
+                    "files": [
+                        {
+                            "url":         latest["download_url"],
+                            "filename":    f"{pkg['name']}.zip",
+                            "destination": cfg["mod_dest"],
+                            "extract":     True,
+                        }
+                    ],
+                })
+
+            if isinstance(data, list) or not data.get("next"):
+                break
+            page += 1
+
+        return mods
+
+    def install_mod_thunderstore(self, game_key, mod, game_install_dir, progress_cb=None):
+        file_entry   = mod["files"][0]
+        url          = file_entry["url"]
+        dest_dir     = os.path.join(game_install_dir, file_entry["destination"])
+        os.makedirs(dest_dir, exist_ok=True)
+
+        r     = requests.get(url, stream=True, timeout=60)
+        r.raise_for_status()
+        total = int(r.headers.get("content-length", 0))
+        done  = 0
+        buf   = io.BytesIO()
+
+        for chunk in r.iter_content(chunk_size=8192):
+            if chunk:
+                buf.write(chunk)
+                done += len(chunk)
+                if progress_cb and total > 0:
+                    progress_cb(done / total)
+
+        buf.seek(0)
+        installed_files = []
+
+        with zipfile.ZipFile(buf) as zf:
+            for member in zf.namelist():
+                if member.endswith("/"):
+                    continue
+                basename = os.path.basename(member)
+                if not basename:
+                    continue
+                dest_path = os.path.join(dest_dir, basename)
+                with zf.open(member) as src, open(dest_path, "wb") as dst:
+                    dst.write(src.read())
+                installed_files.append(dest_path)
+
+        if game_key not in self.installed:
+            self.installed[game_key] = {}
+
+        self.installed[game_key][mod["id"]] = {
+            "name":    mod["name"],
+            "version": mod["version"],
+            "files":   installed_files,
+            "enabled": True,
+        }
+        self._save_installed()
 
     def check_for_app_update(self):
         url = f"https://api.github.com/repos/{MOXI_REPO}/releases/latest"
