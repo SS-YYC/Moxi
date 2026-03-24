@@ -19,6 +19,8 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Slime Rancher 2 | Supported |
 | Dyson Sphere Program | Supported |
 | Valheim | Coming March 24th |
+| Scrap Mechanic | Coming March 24th |
+| Muck | Coming March 24th |
 | Risk of Rain 2 | Coming March 25th |
 | Nuclear Option | Coming March 25th |
 | Lethal Company | Coming March 26th |
