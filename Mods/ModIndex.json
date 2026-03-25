@@ -223,6 +223,15 @@
           "name_prefix": "",
           "id_prefix": "akarnokd-",
           "description_prefix": "Installed from GitHub bundle: "
+        },
+        {
+          "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-AllPlguins.zip",
+          "author": "Lathrey",
+          "version": "2.5.0",
+          "destination": "BepInEx/plugins",
+          "name_prefix": "",
+          "id_prefix": "lathrey-",
+          "description_prefix": "Installed from GitHub bundle: "
         }
       ]
     },
@@ -573,6 +582,22 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SR2Interpolator.dll",
               "filename": "SR2Interpolator.dll",
               "destination": "Mods"
+            }
+          ]
+        },
+        {
+          "id": "skip-intro-sequence",
+          "name": "Skip Intro Sequence",
+          "author": "markekraus",
+          "version": "1.0.0",
+          "source": "github",
+          "description": "A Slime Rancher 2 mod that skips the intro sequence.",
+          "files": [
+            {
+              "url": "https://github.com/markekraus/SR2SkipIntroSequence/releases/download/v1.0.0/SkipIntroSequence.dll",
+              "filename": "SkipIntroSequence.dll",
+              "destination": "Mods",
+              "extract": false
             }
           ]
         }
