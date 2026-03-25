@@ -21,7 +21,7 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Valheim | Coming March 25th |
 | Scrap Mechanic | Coming March 25th |
 | Muck | Coming March 25th |
-| Risk of Rain 2 | Coming March 26th |
+| Risk of Rain 2 | Coming March 25th |
 | Nuclear Option | Coming March 26th |
 | Lethal Company | Coming March 27th |
 
