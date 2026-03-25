@@ -103,7 +103,6 @@ Games listed in the Coming Soon section of the dashboard are managed through `Ga
 {
   "appid": "1234567",
   "name": "Game Name",
-  "game_key": "game_key",
   "coming_date": "April 1st"
 }
 ```
