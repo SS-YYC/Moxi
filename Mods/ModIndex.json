@@ -348,7 +348,7 @@
           "name": "Fixes",
           "author": "Ungeziefi",
           "version": "1.0.0-alpha.6.hf1",
-          "source": "website",
+          "source": "github",
           "description": "T&F Rework fixes pack for original Subnautica.",
           "files": [
             {
@@ -364,7 +364,7 @@
           "name": "Tweaks",
           "author": "Ungeziefi",
           "version": "1.0.0-alpha.6.hf1",
-          "source": "website",
+          "source": "github",
           "description": "T&F Rework tweaks pack for original Subnautica.",
           "files": [
             {
@@ -380,7 +380,7 @@
           "name": "Terraforming",
           "author": "repkins",
           "version": "1.4.5",
-          "source": "website",
+          "source": "github",
           "description": "Terraforming mod for original Subnautica.",
           "files": [
             {
@@ -450,7 +450,7 @@
           "name": "Terraforming BZ",
           "author": "repkins",
           "version": "1.4.5",
-          "source": "website",
+          "source": "github",
           "description": "Terraforming mod for Subnautica: Below Zero.",
           "files": [
             {
