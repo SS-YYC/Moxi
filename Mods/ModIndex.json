@@ -212,6 +212,22 @@
               "destination": "BepInEx/plugins/Valriz-GridSnap"
             }
           ]
+        },
+        {
+          "id": "cheat-drone-speed",
+          "name": "Cheat Drone Speed",
+          "author": "John-K",
+          "version": "1.0.0",
+          "source": "github",
+          "description": "Sets the drone speed as configured. Default is 21",
+          "files": [
+            {
+              "url": "https://github.com/markekraus/SR2SkipIntroSequence/releases/download/v1.0.0/JohnHedge-CheatDroneSpeed.zip",
+              "filename": "JohnHedge-CheatDroneSpeed.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
         }
       ],
       "github_bundles": [
