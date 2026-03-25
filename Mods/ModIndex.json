@@ -342,6 +342,54 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "ungeziefi-fixes",
+          "name": "Fixes",
+          "author": "Ungeziefi",
+          "version": "1.0.0-alpha.6.hf1",
+          "source": "website",
+          "description": "T&F Rework fixes pack for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/Ungeziefi/Subnautica-Mods/releases/download/v1.0.0-alpha.6.hf1/Fixes.7z",
+              "filename": "Fixes.7z",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "ungeziefi-tweaks",
+          "name": "Tweaks",
+          "author": "Ungeziefi",
+          "version": "1.0.0-alpha.6.hf1",
+          "source": "website",
+          "description": "T&F Rework tweaks pack for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/Ungeziefi/Subnautica-Mods/releases/download/v1.0.0-alpha.6.hf1/Tweaks.7z",
+              "filename": "Tweaks.7z",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "terraforming",
+          "name": "Terraforming",
+          "author": "repkins",
+          "version": "1.4.5",
+          "source": "website",
+          "description": "Terraforming mod for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.5/Terraforming_v145.zip",
+              "filename": "Terraforming_v145.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
         }
       ]
     },
@@ -394,6 +442,22 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EnableAchievements.dll",
               "filename": "EnableAchievements.dll",
               "destination": "BepInEx/plugins/EnableAchievements"
+            }
+          ]
+        },
+        {
+          "id": "terraforming_bz",
+          "name": "Terraforming BZ",
+          "author": "repkins",
+          "version": "1.4.5",
+          "source": "website",
+          "description": "Terraforming mod for Subnautica: Below Zero.",
+          "files": [
+            {
+              "url": "https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.5/TerraformingBZ_v145.zip",
+              "filename": "TerraformingBZ_v145.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
             }
           ]
         }
