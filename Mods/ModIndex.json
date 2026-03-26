@@ -22,6 +22,7 @@
           "name": "ContainerFinder",
           "author": "xkursat",
           "version": "1.0.0",
+          "support": "https://buymeacoffee.com/xkursat",
           "description": "Find and locate all containers on the map with 3D markers and distance indicators! Never lose track of your storage containers again.",
           "files": [
             {
