@@ -1,9 +1,9 @@
 {
   "coming_soon": [
     {
-      "appid": "2168680",
-      "name": "Nuclear Option",
-      "coming_date": "March 26th"
+        "appid": "3527290",
+        "name": "PEAK",
+        "coming_date": "March 26th"
     },
     {
         "appid": "1966720",
@@ -11,14 +11,14 @@
         "coming_date": "March 27th"
     },
     {
-      "appid": "361420",
-      "name": "Astroneer",
+      "appid": "2168680",
+      "name": "Nuclear Option",
       "coming_date": "TBD"
     },
     {
-        "appid": "3527290",
-        "name": "PEAK",
-        "coming_date": "TBD"
+      "appid": "361420",
+      "name": "Astroneer",
+      "coming_date": "TBD"
     },
     {
         "appid": "1592190",
