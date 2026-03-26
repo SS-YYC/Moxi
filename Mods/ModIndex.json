@@ -8,6 +8,7 @@
           "name": "No Version Number",
           "author": "dazawmbie",
           "version": "1.0",
+          "support": "https://link.com",
           "description": "Removes the version number on the HUD.",
           "files": [
             {
