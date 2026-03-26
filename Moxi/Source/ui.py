@@ -4,7 +4,7 @@ import json
 import io
 import tkinter as tk
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image, ImageOps, ImageTk
 import threading
 import requests
 from urllib.parse import urljoin
@@ -50,7 +50,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.1.0"
+MOXI_VERSION = "2.1.1"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -65,6 +65,7 @@ CARD_W = 320
 CARD_H = 210
 ART_W  = 300
 ART_H  = 140
+DASH_CARD_W = ART_W
 
 
 
@@ -612,6 +613,7 @@ class MoxiApp(ctk.CTk):
             ("support", None),
             ("issue", "https://github.com/KerbalMissile/Moxi/issues"),
             ("pr", "https://github.com/KerbalMissile/Moxi/pulls"),
+            ("dev_info", None),
         ]
 
         links = [
@@ -623,6 +625,8 @@ class MoxiApp(ctk.CTk):
         for kind, url in community_links:
             if kind == "support":
                 self._make_nav_link(left_links, "Support Moxi <3", lambda: self._show_page("support_moxi"))
+            elif kind == "dev_info":
+                self._make_nav_link(left_links, "Dev Info", lambda: self._show_page("dev_info"))
             else:
                 self._make_icon_btn(left_links, kind, url)
 
@@ -689,6 +693,7 @@ class MoxiApp(ctk.CTk):
             "mod_database": self._build_mod_database,
             "settings":     self._build_settings,
             "support_moxi": self._build_support_moxi,
+            "dev_info":     self._build_dev_info,
         }[key](frame)
 
         # Scroll all CTkScrollableFrames on this page back to the top
@@ -984,7 +989,7 @@ class MoxiApp(ctk.CTk):
 
         card = ctk.CTkFrame(
             parent, fg_color=CARD_BG, corner_radius=10,
-            width=CARD_W, height=CARD_H, border_width=0
+            width=DASH_CARD_W, height=CARD_H, border_width=0
         )
         card.pack(side="left", padx=(0, 14), pady=4)
         card.pack_propagate(False)
@@ -1006,11 +1011,12 @@ class MoxiApp(ctk.CTk):
         name_row = ctk.CTkFrame(info, fg_color="transparent")
         name_row.pack(fill="x")
 
-        ctk.CTkLabel(
+        name_lbl = ctk.CTkLabel(
             name_row, text=name,
             font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
             text_color=TEXT_ON, wraplength=260, anchor="w", justify="left"
-        ).pack(side="left", anchor="w")
+        )
+        name_lbl.pack(side="left", anchor="w")
 
         bottom = ctk.CTkFrame(info, fg_color="transparent")
         bottom.pack(fill="x", pady=(4, 0))
@@ -1028,12 +1034,13 @@ class MoxiApp(ctk.CTk):
             badge_text  = "Coming Soon"
             badge_color = "#444444"
 
-        ctk.CTkLabel(
+        badge_lbl = ctk.CTkLabel(
             bottom,
             text=badge_text,
             font=ctk.CTkFont(family="Segoe UI", size=10),
             text_color=badge_color, anchor="w"
-        ).pack(side="left", anchor="center")
+        )
+        badge_lbl.pack(side="left", anchor="center")
 
         play_btn = ctk.CTkButton(
             bottom, text="Play",
@@ -1065,12 +1072,14 @@ class MoxiApp(ctk.CTk):
             _glow_on_hover(open_folder_btn, targets=[open_folder_btn], is_btn=True)
 
         def on_card_click(e):
+            if isinstance(getattr(e, "widget", None), ctk.CTkButton):
+                return
             self._selected_game = name
             g = {"appid": appid, "name": name, "game_key": game_key, "supported": supported}
             self._show_game_mods(g)
 
-        art_frame.bind("<Button-1>", on_card_click)
-        art_label.bind("<Button-1>", on_card_click)
+        for widget in (card, art_frame, art_label, info, name_row, name_lbl, bottom, badge_lbl):
+            widget.bind("<Button-1>", on_card_click)
 
         _glow_on_hover(card, targets=[card, art_frame, art_label, info, bottom], bg_normal=CARD_BG, bg_hover="#222222")
         threading.Thread(target=self._load_art, args=(appid, art_label), daemon=True).start()
@@ -1125,7 +1134,12 @@ class MoxiApp(ctk.CTk):
             r = requests.get(url, timeout=6)
             if r.status_code == 200:
                 img = Image.open(io.BytesIO(r.content))
-                return img.resize((width, height), Image.LANCZOS)
+                fitted = ImageOps.contain(img, (width, height), Image.LANCZOS)
+                canvas = Image.new("RGBA", (width, height), "#1e1e1e")
+                x = (width - fitted.width) // 2
+                y = (height - fitted.height) // 2
+                canvas.paste(fitted, (x, y))
+                return canvas
         except Exception:
             pass
         return None
@@ -3197,6 +3211,65 @@ class MoxiApp(ctk.CTk):
             justify="left",
             anchor="w"
         ).pack(anchor="w", padx=28, pady=(0, 18))
+
+        back_btn = ctk.CTkButton(
+            card, text="Back to Dashboard",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            fg_color="#1e1e1e", hover_color="#2a2a2a",
+            text_color=TEXT_DIM, corner_radius=6,
+            border_width=0, width=150, height=32,
+            command=lambda: self._show_page("dashboard")
+        )
+        back_btn.pack(anchor="w", padx=28, pady=(0, 28))
+        _glow_on_hover(back_btn, targets=[back_btn], is_btn=True)
+
+    def _build_dev_info(self, parent):
+        import webbrowser
+
+        wrap = ctk.CTkFrame(parent, fg_color=BG, corner_radius=0)
+        wrap.pack(fill="both", expand=True, padx=32, pady=32)
+
+        card = ctk.CTkFrame(wrap, fg_color=CARD_BG, corner_radius=12)
+        card.pack(expand=True, fill="both")
+
+        ctk.CTkLabel(
+            card,
+            text="Dev Info",
+            font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
+            text_color=ACCENT
+        ).pack(anchor="w", padx=28, pady=(28, 12))
+
+        text_box = tk.Text(
+            card,
+            wrap="word",
+            font=("Segoe UI", 14),
+            fg=TEXT_ON,
+            bg=CARD_BG,
+            bd=0,
+            highlightthickness=0,
+            relief="flat",
+            cursor="arrow",
+            padx=0,
+            pady=0,
+            height=5
+        )
+        text_box.pack(fill="x", padx=28, pady=(0, 18))
+
+        text_box.insert("end", "Hello devs, if you would like to submit a mod please open a pull request adding your mod to the ModIndex.json ")
+        text_box.insert("end", "here", ("link",))
+        text_box.insert("end", " and fill out all relevant information.\n\n")
+        text_box.insert("end", "If you would like to remove your mod from Moxi or have any questions relating to adding mods or anything else please Email Me at kerbalmissile@gmail.com, shoot me a message on discord at kerbalmissile, or open an Issue or Pull Request on the ")
+        text_box.insert("end", "GitHub", ("github_link",))
+        text_box.insert("end", ".")
+
+        text_box.tag_configure("link", foreground=ACCENT, underline=True)
+        text_box.tag_configure("github_link", foreground=ACCENT, underline=True)
+        text_box.tag_bind("link", "<Button-1>", lambda e: webbrowser.open("https://github.com/KerbalMissile/Moxi/blob/main/Mods/ModIndex.json"))
+        text_box.tag_bind("github_link", "<Button-1>", lambda e: webbrowser.open("https://github.com/KerbalMissile/Moxi"))
+        text_box.tag_bind("link", "<Enter>", lambda e: text_box.configure(cursor="hand2"))
+        text_box.tag_bind("github_link", "<Enter>", lambda e: text_box.configure(cursor="hand2"))
+        text_box.bind("<Leave>", lambda e: text_box.configure(cursor="arrow"))
+        text_box.configure(state="disabled")
 
         back_btn = ctk.CTkButton(
             card, text="Back to Dashboard",
