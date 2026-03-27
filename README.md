@@ -22,8 +22,9 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Scrap Mechanic | Supported |
 | Muck | Supported |
 | Risk of Rain 2 | Supported |
-| PEAK | Coming March 26th |
-| Lethal Company | Coming March 27th |
+| PEAK | Supported |
+| BONELAB | Coming March 27th |
+| BONEWORKS | Coming March 27th |
 
 ---
 
