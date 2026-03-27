@@ -34,7 +34,7 @@ CURATED_MODS_REPO_URL = "https://github.com/KerbalMissile/MoxiDefaultMods"
 
 THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "peak", "schedule_i", "valheim", "scrap_mechanic"}
 
-NEWLY_ADDED = {"dyson_sphere", "muck", "risk_of_rain_2", "peak", "schedule_i", "valheim", "scrap_mechanic"}
+NEWLY_ADDED = {"muck", "risk_of_rain_2", "peak", "schedule_i", "valheim", "scrap_mechanic"}
 
 THUNDERSTORE_BLOCKLIST = {
     "schedule_i":    {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
@@ -50,7 +50,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.1.1"
+MOXI_VERSION = "2.1.2"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
