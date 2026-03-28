@@ -59,7 +59,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.2.0"
+MOXI_VERSION = "2.2.1"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -1820,7 +1820,7 @@ class MoxiApp(ctk.CTk):
                 desc_lbl = ctk.CTkLabel(left, text="", font=ctk.CTkFont(family="Segoe UI", size=11), text_color=TEXT_DIM, anchor="w", wraplength=700, justify="left")
                 desc_lbl.pack(anchor="w", pady=(3, 0))
 
-                right = ctk.CTkFrame(frame, fg_color="transparent", width=240)
+                right = ctk.CTkFrame(frame, fg_color="transparent", width=330)
                 right.pack(side="right", padx=16, pady=10)
                 right.pack_propagate(False)
 
