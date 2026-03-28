@@ -31,8 +31,8 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Muck | Supported |
 | Risk of Rain 2 | Supported |
 | PEAK | Supported |
-| BONELAB | Coming March 28th |
-| BONEWORKS | Coming March 28th |
+| BONELAB | Supported |
+| BONEWORKS | Supported |
 
 ---
 
