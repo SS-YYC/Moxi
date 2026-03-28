@@ -103,6 +103,15 @@ MODLOADER_CONFIGS = {
         "mod_dest":   os.path.join("BepInEx", "plugins"),
         "subfolder":  "BepInExPack_Muck",
     },
+    "boneworks": {
+        "type":       "thunderstore_pkg",
+        "owner":      "LavaGang",
+        "name":       "MelonLoader",
+        "community":  "boneworks",
+        "check_path": "MelonLoader",
+        "mod_dest":   "Mods",
+        "subfolder":  "MelonLoader",
+    },
     "risk_of_rain_2": {
         "type":       "thunderstore_pkg",
         "owner":      "bbepis",
@@ -113,12 +122,25 @@ MODLOADER_CONFIGS = {
         "mod_dest":   os.path.join("BepInEx", "plugins"),
         "subfolder":  "BepInExPack",
     },
+    "bonelab": {
+        "type":       "thunderstore_pkg",
+        "owner":      "LavaGang",
+        "name":       "MelonLoader",
+        "community":  "bonelab",
+        "check_path": "MelonLoader",
+        "mod_dest":   "Mods",
+        "subfolder":  "MelonLoader",
+    },
 }
 
 THUNDERSTORE_CONFIGS = {
     "dyson_sphere": {
         "community": "dyson-sphere-program",
         "mod_dest":  os.path.join("BepInEx", "plugins"),
+    },
+    "boneworks": {
+        "community": "boneworks",
+        "mod_dest":  "Mods",
     },
     "schedule_i": {
         "community": "schedule-i",
@@ -127,6 +149,10 @@ THUNDERSTORE_CONFIGS = {
     "peak": {
         "community": "peak",
         "mod_dest":  os.path.join("BepInEx", "plugins"),
+    },
+    "bonelab": {
+        "community": "bonelab",
+        "mod_dest":  "Mods",
     },
     "valheim": {
         "community": "valheim",

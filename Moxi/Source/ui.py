@@ -6,10 +6,15 @@ import tkinter as tk
 import customtkinter as ctk
 from PIL import Image, ImageOps, ImageTk
 import threading
+import queue
 import requests
 from urllib.parse import urljoin
 
 from mod_manager import ModConflictError, ModManager, SteamScanner, THUNDERSTORE_CONFIGS
+from stats import StatsClient
+
+DATA_DIR = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi")
+APP_SETTINGS_PATH = os.path.join(DATA_DIR, "app_settings.json")
 
 SUPPORTED_GAMES = {
     "1284190": {"name": "Planet Crafter",        "supported": True, "game_key": "planet_crafter"},
@@ -20,8 +25,10 @@ SUPPORTED_GAMES = {
     "1366540": {"name": "Dyson Sphere Program",   "supported": True, "game_key": "dyson_sphere"},
     "1625450": {"name": "Muck",                   "supported": True, "game_key": "muck"},
     "632360":  {"name": "Risk of Rain 2",         "supported": True, "game_key": "risk_of_rain_2"},
+    "823500":  {"name": "BONEWORKS",              "supported": True, "game_key": "boneworks"},
     "3527290": {"name": "PEAK",                   "supported": True, "game_key": "peak"},
     "3164500": {"name": "Schedule I",              "supported": True, "game_key": "schedule_i"},
+    "1592190": {"name": "BONELAB",                "supported": True, "game_key": "bonelab"},
     "892970":  {"name": "Valheim",                 "supported": True, "game_key": "valheim"},
     "387990":  {"name": "Scrap Mechanic",          "supported": True, "game_key": "scrap_mechanic"},
 }
@@ -32,16 +39,18 @@ CUSTOM_ART_URLS = {
 
 CURATED_MODS_REPO_URL = "https://github.com/KerbalMissile/MoxiDefaultMods"
 
-THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "peak", "schedule_i", "valheim", "scrap_mechanic"}
+THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "boneworks", "peak", "schedule_i", "bonelab", "valheim", "scrap_mechanic"}
 
-NEWLY_ADDED = {"muck", "risk_of_rain_2", "peak", "schedule_i", "valheim", "scrap_mechanic"}
+NEWLY_ADDED = {"boneworks", "bonelab", "muck", "peak", "risk_of_rain_2", "scrap_mechanic", "valheim"}
 
 THUNDERSTORE_BLOCKLIST = {
     "schedule_i":    {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "dyson_sphere":  {"ebkr-r2modman", "xiaoye97-BepInEx", "CapsaicinBunny-BepInEx_LTS", "Kesomannen-GaleModManager"},
     "muck":          {"BepInEx-BepInExPack_Muck", "ebkr-r2modman", "Kesomannen-GaleModManager"},
+    "boneworks":     {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "peak":          {"BepInEx-BepInExPack_PEAK", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "risk_of_rain_2": {"bbepis-BepInExPack", "ebkr-r2modman", "Kesomannen-GaleModManager"},
+    "bonelab":       {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "valheim":       {"denikson-BepInExPack_Valheim", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "scrap_mechanic": {"ebkr-r2modman", "Kesomannen-GaleModManager"},
 }
@@ -50,7 +59,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.1.2"
+MOXI_VERSION = "2.2.0"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -125,6 +134,10 @@ class MoxiApp(ctk.CTk):
 
         self._logo_img       = None
         self._art_cache      = {}
+        self._art_load_queue = queue.Queue()
+        self._art_loader_started = False
+        self._art_loader_lock = threading.Lock()
+        self._app_settings = self._load_app_settings()
         self._mod_icon_cache = {}
         self._mod_icon_loading = set()
         self._mod_icon_lock    = threading.Lock()
@@ -148,11 +161,17 @@ class MoxiApp(ctk.CTk):
         self._current_page        = None
         self._available_mods_cache = {}
         self._dismissed_warnings  = self._mod_manager.load_dismissed_warnings()
+        self._stats = StatsClient(MOXI_VERSION)
+        self._stats_consent_required = not self._stats.has_consent_decision()
 
         self._load_logo()
+        self._ensure_art_loader()
         self._build_topbar()
         self._build_content_area()
-        self._show_page("dashboard")
+        self.protocol("WM_DELETE_WINDOW", self._on_app_close)
+        self._show_page("stats_consent" if self._stats_consent_required else "dashboard")
+        if not self._stats_consent_required:
+            self._stats.track_app_started()
 
         threading.Thread(target=self._scan_steam, daemon=True).start()
         threading.Thread(target=self._do_fetch_index, daemon=True).start()
@@ -161,7 +180,7 @@ class MoxiApp(ctk.CTk):
         self.after(200, self._check_post_update)
 
     def _load_recently_played(self):
-        path = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi", "recently_played.json")
+        path = os.path.join(DATA_DIR, "recently_played.json")
         try:
             if os.path.exists(path):
                 with open(path, "r") as f:
@@ -171,12 +190,39 @@ class MoxiApp(ctk.CTk):
         return []
 
     def _save_recently_played(self):
-        path = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi", "recently_played.json")
+        path = os.path.join(DATA_DIR, "recently_played.json")
         try:
             with open(path, "w") as f:
                 json.dump(self._recently_played, f, indent=2)
         except Exception:
             pass
+
+    def _load_app_settings(self):
+        os.makedirs(DATA_DIR, exist_ok=True)
+        if os.path.exists(APP_SETTINGS_PATH):
+            try:
+                with open(APP_SETTINGS_PATH, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    return data
+            except Exception:
+                pass
+        return {"staggered_loading": True}
+
+    def _save_app_settings(self):
+        try:
+            os.makedirs(DATA_DIR, exist_ok=True)
+            with open(APP_SETTINGS_PATH, "w", encoding="utf-8") as f:
+                json.dump(self._app_settings, f, indent=2)
+        except Exception:
+            pass
+
+    def _is_staggered_loading_enabled(self):
+        return self._app_settings.get("staggered_loading", True) is True
+
+    def _set_staggered_loading_enabled(self, enabled):
+        self._app_settings["staggered_loading"] = bool(enabled)
+        self._save_app_settings()
 
     def _record_play(self, game):
         self._recently_played = [g for g in self._recently_played if g["appid"] != game["appid"]]
@@ -592,6 +638,7 @@ class MoxiApp(ctk.CTk):
             btn.pack(side="left", padx=3)
             self._nav_buttons[key] = btn
             _glow_on_hover(btn, targets=[btn], is_btn=True)
+        self._refresh_nav_state()
 
     def _build_content_area(self):
         self._content = ctk.CTkFrame(self, fg_color=BG, corner_radius=0)
@@ -674,6 +721,9 @@ class MoxiApp(ctk.CTk):
         lbl.bind("<Button-1>", lambda e: command())
 
     def _show_page(self, key):
+        if self._stats_consent_required and key != "stats_consent":
+            key = "stats_consent"
+
         if self._active_frame:
             self._active_frame.destroy()
             self._active_frame   = None
@@ -694,6 +744,7 @@ class MoxiApp(ctk.CTk):
             "settings":     self._build_settings,
             "support_moxi": self._build_support_moxi,
             "dev_info":     self._build_dev_info,
+            "stats_consent": self._build_stats_consent,
         }[key](frame)
 
         # Scroll all CTkScrollableFrames on this page back to the top
@@ -706,14 +757,39 @@ class MoxiApp(ctk.CTk):
                 pass
         self.after(0, _scroll_to_top)
 
+    def _refresh_nav_state(self):
+        state = "disabled" if getattr(self, "_stats_consent_required", False) else "normal"
+        for btn in getattr(self, "_nav_buttons", {}).values():
+            try:
+                btn.configure(state=state)
+            except Exception:
+                pass
+
+    def _on_app_close(self):
+        try:
+            self._stats.close_session()
+        except Exception:
+            pass
+        self.destroy()
+
     def _do_fetch_index(self, on_done=None):
         if self._index_loading:
             return
         self._index_loading = True
         try:
             self._mod_index = self._mod_manager.fetch_mod_index()
-        except Exception:
+            try:
+                games = self._mod_index.get("games", {})
+                counts = {key: len(value.get("mods", [])) for key, value in games.items()}
+                print(f"[Moxi Mods] mod index loaded games={len(games)} counts={counts}", flush=True)
+            except Exception:
+                pass
+        except Exception as exc:
             self._mod_index = {}
+            try:
+                print(f"[Moxi Mods] mod index fetch failed: {exc!r}", flush=True)
+            except Exception:
+                pass
         finally:
             self._index_loading = False
         if on_done:
@@ -725,8 +801,16 @@ class MoxiApp(ctk.CTk):
     def _do_fetch_game_index(self):
         try:
             self._game_index = self._mod_manager.fetch_game_index()
-        except Exception:
+            try:
+                print(f"[Moxi Mods] game index loaded entries={len(self._game_index.get('games', []))}", flush=True)
+            except Exception:
+                pass
+        except Exception as exc:
             self._game_index = {}
+            try:
+                print(f"[Moxi Mods] game index fetch failed: {exc!r}", flush=True)
+            except Exception:
+                pass
         if self._active_frame:
             self._active_frame.after(0, self._refresh_coming_soon)
 
@@ -784,6 +868,7 @@ class MoxiApp(ctk.CTk):
             for appid, v in SUPPORTED_GAMES.items()
             if v["game_key"] in NEWLY_ADDED
         ]
+        newly.sort(key=lambda g: g["name"].lower())
         self._build_section(scroll, "Newly Added to Moxi", newly)
 
         coming = self._get_coming_soon_games()
@@ -973,7 +1058,7 @@ class MoxiApp(ctk.CTk):
                 text_color=TEXT_DIM
             ).pack(side="left", padx=16, pady=30)
             return
-        for game in self._detected:
+        for game in sorted(self._detected, key=lambda g: g.get("name", "").lower()):
             self._make_game_card(self._detected_inner, game)
 
     def _make_game_card(self, parent, game):
@@ -1082,7 +1167,7 @@ class MoxiApp(ctk.CTk):
             widget.bind("<Button-1>", on_card_click)
 
         _glow_on_hover(card, targets=[card, art_frame, art_label, info, bottom], bg_normal=CARD_BG, bg_hover="#222222")
-        threading.Thread(target=self._load_art, args=(appid, art_label), daemon=True).start()
+        self._queue_art_load(appid, art_label)
 
     def _launch_game(self, game):
         import webbrowser
@@ -1127,6 +1212,38 @@ class MoxiApp(ctk.CTk):
             label.after(0, apply)
         except Exception:
             pass
+
+    def _ensure_art_loader(self):
+        with self._art_loader_lock:
+            if self._art_loader_started:
+                return
+            self._art_loader_started = True
+        threading.Thread(target=self._art_loader_loop, daemon=True, name="moxi-art-loader").start()
+
+    def _queue_art_load(self, appid, label, width=ART_W, height=ART_H):
+        request_key = (appid, width, height)
+        try:
+            label._moxi_art_request = request_key
+        except Exception:
+            pass
+        if not self._is_staggered_loading_enabled():
+            threading.Thread(
+                target=self._load_art,
+                args=(appid, label, width, height),
+                daemon=True,
+            ).start()
+            return
+        self._art_load_queue.put((appid, label, width, height, request_key))
+
+    def _art_loader_loop(self):
+        while True:
+            appid, label, width, height, request_key = self._art_load_queue.get()
+            try:
+                if getattr(label, "_moxi_art_request", None) != request_key:
+                    continue
+            except Exception:
+                continue
+            self._load_art(appid, label, width, height)
 
     def _fetch_cdn_art(self, appid, width=ART_W, height=ART_H):
         url = CUSTOM_ART_URLS.get(str(appid)) or f"https://steamcdn-a.akamaihd.net/steam/apps/{appid}/header.jpg"
@@ -1191,6 +1308,7 @@ class MoxiApp(ctk.CTk):
             for appid, v in SUPPORTED_GAMES.items()
             if v["supported"]
         ]
+        all_games.sort(key=lambda g: g["name"].lower())
 
         for i, game in enumerate(all_games):
             game_key  = game["game_key"]
@@ -1203,9 +1321,7 @@ class MoxiApp(ctk.CTk):
             curated_count = len(curated_raw)
             ts_cached     = self._thunderstore_cache.get(game_key) if game_key in THUNDERSTORE_GAMES else []
 
-            if game_key == "valheim":
-                total_count = None
-            elif game_key in THUNDERSTORE_GAMES and ts_cached is None:
+            if game_key in THUNDERSTORE_GAMES and ts_cached is None:
                 total_count = None
             else:
                 blocked    = THUNDERSTORE_BLOCKLIST.get(game_key, set())
@@ -1253,7 +1369,7 @@ class MoxiApp(ctk.CTk):
             )
             mod_count_lbl.pack(side="left")
 
-            if game_key in THUNDERSTORE_GAMES and game_key != "valheim" and ts_cached is None and game_key not in self._ts_loading:
+            if game_key in THUNDERSTORE_GAMES and ts_cached is None and game_key not in self._ts_loading:
                 self._ts_loading.add(game_key)
 
                 def _fetch_ts_count(gk=game_key, lbl=mod_count_lbl, installed=installed_count,
@@ -1298,7 +1414,7 @@ class MoxiApp(ctk.CTk):
             _glow_on_hover(card, targets=[card, art_frame, art_label, info, count_row, mod_count_lbl],
                            bg_normal=CARD_BG, bg_hover="#222222")
 
-            threading.Thread(target=self._load_art, args=(appid, art_label, card_w, art_h), daemon=True).start()
+            self._queue_art_load(appid, art_label, card_w, art_h)
 
     def _show_game_mods(self, game):
         """Replace the content area with the per-game mod view."""
@@ -1711,8 +1827,6 @@ class MoxiApp(ctk.CTk):
                 inst_lbl = ctk.CTkLabel(right, text="", font=ctk.CTkFont(family="Segoe UI", size=11), text_color=TEXT_DIM)
                 inst_lbl.pack(anchor="e", pady=(0, 4))
 
-                progress_bar = ctk.CTkProgressBar(right, width=120, height=8, fg_color="#2a2a2a", progress_color=ACCENT)
-
                 btn_row = ctk.CTkFrame(right, fg_color="transparent")
                 btn_row.pack(anchor="e")
 
@@ -1760,7 +1874,7 @@ class MoxiApp(ctk.CTk):
                     "author_lbl": author_lbl, "source_lbl": source_lbl,
                     "desc_lbl": desc_lbl, "inst_lbl": inst_lbl, "left": left,
                     "icon_wrap": icon_wrap, "icon_lbl": icon_lbl,
-                    "progress_bar": progress_bar, "btn_row": btn_row,
+                    "btn_row": btn_row,
                     "toggle_canvas": toggle_canvas, "config_btn": config_btn, "support_btn": support_btn, "action_btn": action_btn,
                     "update_btn": update_btn,
                     "mod": [None], "bound_game_key": [None],
@@ -1902,8 +2016,6 @@ class MoxiApp(ctk.CTk):
                 slot["update_btn"].configure(state="normal",
                     command=lambda s=slot, gk2=gk: _do_update(s, gk2))
 
-            slot["progress_bar"].pack_forget()
-
             slot["toggle_canvas"].unbind("<Button-1>")
             if installed and not active_pack:
                 def _on_toggle(e=None, s=slot, gk2=gk, me=mod_enabled):
@@ -1934,10 +2046,13 @@ class MoxiApp(ctk.CTk):
                             self._mod_manager.disable_mod(gk2, mod_id)
                         except Exception:
                             pass
+                    if not _mod_in_other_pack(mod_id, exclude_pack_id=active_pack.get("id") if active_pack else None):
+                        self._stats.track_mod_deleted(gk2, 1)
                     _go_page(state["page"])
                     return
                 try:
                     self._mod_manager.uninstall_mod(gk2, s["mod"][0]["id"])
+                    self._stats.track_mod_deleted(gk2, 1)
                     s["inst_lbl"].configure(text="Not Installed", text_color=TEXT_DIM)
                     s["action_btn"].configure(
                         text="Install", fg_color=ACCENT,
@@ -1993,11 +2108,14 @@ class MoxiApp(ctk.CTk):
 
                 _dismiss_notif()
                 s["action_btn"].configure(state="disabled", text="Downloading...")
-                s["progress_bar"].set(0)
-                s["progress_bar"].pack(anchor="e", pady=(0, 4))
 
                 deps_to_install = confirmed_deps or []
                 all_installs    = deps_to_install + [s["mod"][0]]
+                planned_ids     = {m["id"] for m in all_installs}
+                before_ids      = {
+                    mid for mid in planned_ids
+                    if self._mod_manager.is_installed(gk2, mid)
+                }
                 total_steps     = len(all_installs)
 
                 def install_all():
@@ -2006,13 +2124,9 @@ class MoxiApp(ctk.CTk):
 
                     if install_modloader_first:
                         try:
-                            def bep_progress(val):
-                                try: s["progress_bar"].set(val * 0.3)
-                                except Exception: pass
                             s["action_btn"].after(0, lambda: s["action_btn"].configure(text="Installing mod loader..."))
-                            self._mod_manager.install_modloader(gk2, install_dir2, bep_progress)
+                            self._mod_manager.install_modloader(gk2, install_dir2)
                         except Exception:
-                            s["progress_bar"].after(0, s["progress_bar"].pack_forget)
                             s["inst_lbl"].after(0, lambda: s["inst_lbl"].configure(text="Mod loader install failed", text_color="#cc4444"))
                             s["action_btn"].after(0, lambda: s["action_btn"].configure(state="normal", text="Retry"))
                             return
@@ -2027,32 +2141,30 @@ class MoxiApp(ctk.CTk):
                         n          = current_mod["name"]
                         s["action_btn"].after(0, lambda nm=n: s["action_btn"].configure(text=f"Installing {nm}..."))
 
-                        def progress_cb(val, ss=step_start, se=step_end):
-                            try: s["progress_bar"].set(ss + val * (se - ss))
-                            except Exception: pass
-
                         try:
                             src = current_mod.get("source", "curated")
                             if src == "thunderstore":
-                                self._mod_manager.install_mod_thunderstore(gk2, current_mod, install_dir2, progress_cb)
+                                self._mod_manager.install_mod_thunderstore(gk2, current_mod, install_dir2)
                             else:
-                                self._mod_manager.install_mod(gk2, current_mod, install_dir2, progress_cb)
+                                self._mod_manager.install_mod(gk2, current_mod, install_dir2)
                             installed_now.append(current_mod)
                         except ModConflictError as exc:
-                            s["progress_bar"].after(0, s["progress_bar"].pack_forget)
                             s["inst_lbl"].after(0, lambda msg=str(exc): s["inst_lbl"].configure(text=msg, text_color="#ccaa44"))
                             s["action_btn"].after(0, lambda: s["action_btn"].configure(state="normal", text="Retry", command=lambda: _do_install(s, gk2)))
                             return
                         except Exception:
-                            s["progress_bar"].after(0, s["progress_bar"].pack_forget)
                             s["inst_lbl"].after(0, lambda: s["inst_lbl"].configure(text="Install failed", text_color="#cc4444"))
                             s["action_btn"].after(0, lambda: s["action_btn"].configure(state="normal", text="Retry", command=lambda: _do_install(s, gk2)))
                             return
 
                     _finalize_pack_membership(installed_now, gk2)
+                    installed_count = sum(
+                        1 for mid in planned_ids
+                        if mid not in before_ids and self._mod_manager.is_installed(gk2, mid)
+                    )
+                    self._stats.track_mod_install(gk2, installed_count)
 
                     def on_done():
-                        s["progress_bar"].pack_forget()
                         _go_page(state["page"])
 
                     s["action_btn"].after(0, on_done)
@@ -2133,6 +2245,14 @@ class MoxiApp(ctk.CTk):
             sliced = mods_source[start:start + PAGE_SIZE]
 
             status_lbl.configure(text=f"{total} mod{'s' if total != 1 else ''}")
+            try:
+                print(
+                    f"[Moxi Mods] render game={gk} total={total} "
+                    f"filtered={state['filtered_mods'] is not None} page={page + 1}/{max_page + 1}",
+                    flush=True,
+                )
+            except Exception:
+                pass
             page_lbl.configure(text=f"Page {page + 1} of {max_page + 1}")
             prev_btn.configure(state="normal" if page > 0 else "disabled",
                                text_color=TEXT_DIM if page > 0 else "#333333")
@@ -2250,28 +2370,21 @@ class MoxiApp(ctk.CTk):
             slot["action_btn"].configure(state="disabled", text="Updating...")
             if "update_btn" in slot:
                 slot["update_btn"].configure(state="disabled")
-            slot["progress_bar"].set(0)
-            slot["progress_bar"].pack(anchor="e", pady=(0, 4))
 
             def _run():
                 try:
                     self._mod_manager.uninstall_mod(gk2, mid)
                     src = mod.get("source", "curated")
 
-                    def progress_cb(val):
-                        try: slot["progress_bar"].set(val)
-                        except Exception: pass
-
                     if src == "thunderstore":
-                        self._mod_manager.install_mod_thunderstore(gk2, mod, install_dir, progress_cb)
+                        self._mod_manager.install_mod_thunderstore(gk2, mod, install_dir)
                     else:
-                        self._mod_manager.install_mod(gk2, mod, install_dir, progress_cb)
+                        self._mod_manager.install_mod(gk2, mod, install_dir)
 
                     if not was_enabled:
                         self._mod_manager.disable_mod(gk2, mid)
 
                     def on_done():
-                        slot["progress_bar"].pack_forget()
                         state["updates_available"].pop(mid, None)
                         if not state["updates_available"]:
                             update_all_btn.pack_forget()
@@ -2282,7 +2395,6 @@ class MoxiApp(ctk.CTk):
                 except ModConflictError as exc:
                     msg = str(exc)
                     def on_fail():
-                        slot["progress_bar"].pack_forget()
                         slot["inst_lbl"].configure(text=msg, text_color="#ccaa44")
                         slot["action_btn"].configure(state="normal", text="Remove",
                             command=lambda: _do_remove(slot, gk2))
@@ -2291,7 +2403,6 @@ class MoxiApp(ctk.CTk):
                     slot["action_btn"].after(0, on_fail)
                 except Exception:
                     def on_fail():
-                        slot["progress_bar"].pack_forget()
                         slot["inst_lbl"].configure(text="Update failed", text_color="#cc4444")
                         slot["action_btn"].configure(state="normal", text="Remove",
                             command=lambda: _do_remove(slot, gk2))
@@ -2630,8 +2741,6 @@ class MoxiApp(ctk.CTk):
         )
         status_lbl.pack(anchor="e", pady=(0, 4))
 
-        progress_bar = ctk.CTkProgressBar(right, width=120, height=8, fg_color="#2a2a2a", progress_color=ACCENT)
-
         btn_row = ctk.CTkFrame(right, fg_color="transparent")
         btn_row.pack(anchor="e")
 
@@ -2701,7 +2810,7 @@ class MoxiApp(ctk.CTk):
         action_btn.pack(side="left")
         _glow_on_hover(action_btn, targets=[action_btn], is_btn=True)
 
-        def do_install(bepinex_progress_offset=0.0):
+        def do_install():
             game_data   = self._detected_map.get(game_key)
             install_dir = game_data["install_dir"] if game_data else None
 
@@ -2710,18 +2819,10 @@ class MoxiApp(ctk.CTk):
                 action_btn.after(0, lambda: action_btn.configure(state="normal", text="Install"))
                 return
 
-            remaining = 1.0 - bepinex_progress_offset
-
-            def progress_cb(val):
-                try:
-                    progress_bar.set(bepinex_progress_offset + val * remaining)
-                except Exception:
-                    pass
-
             try:
-                self._mod_manager.install_mod(game_key, mod, install_dir, progress_cb)
+                self._mod_manager.install_mod(game_key, mod, install_dir)
+                self._stats.track_mod_install(game_key, 1)
                 action_btn.after(0, action_btn.pack_forget)
-                progress_bar.after(0, progress_bar.pack_forget)
                 status_lbl.after(0, lambda: status_lbl.configure(text="Installed", text_color="#44cc88"))
                 def set_remove():
                     if on_install_done:
@@ -2739,14 +2840,12 @@ class MoxiApp(ctk.CTk):
                         _draw_toggle(True)
                 action_btn.after(0, set_remove)
             except ModConflictError as exc:
-                progress_bar.after(0, progress_bar.pack_forget)
                 status_lbl.after(0, lambda msg=str(exc): status_lbl.configure(text=msg, text_color="#ccaa44"))
                 def set_retry():
                     action_btn.configure(state="normal", text="Retry")
                     action_btn.pack(anchor="e")
                 action_btn.after(0, set_retry)
             except Exception:
-                progress_bar.after(0, progress_bar.pack_forget)
                 status_lbl.after(0, lambda: status_lbl.configure(text="Install failed", text_color="#cc4444"))
                 def set_retry():
                     action_btn.configure(state="normal", text="Retry")
@@ -2756,6 +2855,7 @@ class MoxiApp(ctk.CTk):
         def do_remove():
             try:
                 self._mod_manager.uninstall_mod(game_key, mod["id"])
+                self._stats.track_mod_deleted(game_key, 1)
                 status_lbl.configure(text="Not Installed", text_color=TEXT_DIM)
                 action_btn.configure(
                     text="Install", fg_color=ACCENT,
@@ -2863,12 +2963,15 @@ class MoxiApp(ctk.CTk):
 
             _dismiss_notif()
             action_btn.configure(state="disabled", text="Downloading...")
-            progress_bar.set(0)
-            progress_bar.pack(anchor="e", pady=(0, 4))
             action_btn.pack(anchor="e")
 
             deps_to_install = confirmed_deps or []
             all_installs    = deps_to_install + [mod]
+            planned_ids     = {m["id"] for m in all_installs}
+            before_ids      = {
+                mid for mid in planned_ids
+                if self._mod_manager.is_installed(game_key, mid)
+            }
             total_steps     = len(all_installs)
 
             def install_all():
@@ -2877,15 +2980,9 @@ class MoxiApp(ctk.CTk):
 
                 if install_bepinex_first:
                     try:
-                        def bep_progress(val):
-                            try:
-                                progress_bar.set(val * 0.3)
-                            except Exception:
-                                pass
                         action_btn.after(0, lambda: action_btn.configure(text="Installing mod loader..."))
-                        self._mod_manager.install_modloader(game_key, install_dir2, bep_progress)
+                        self._mod_manager.install_modloader(game_key, install_dir2)
                     except Exception:
-                        progress_bar.after(0, progress_bar.pack_forget)
                         status_lbl.after(0, lambda: status_lbl.configure(text="Mod loader install failed", text_color="#cc4444"))
                         action_btn.after(0, lambda: action_btn.configure(state="normal", text="Retry"))
                         action_btn.after(0, lambda: action_btn.pack(anchor="e"))
@@ -2901,26 +2998,18 @@ class MoxiApp(ctk.CTk):
 
                     action_btn.after(0, lambda n=name: action_btn.configure(text=f"Installing {n}..."))
 
-                    def progress_cb(val, s=step_start, e=step_end):
-                        try:
-                            progress_bar.set(s + val * (e - s))
-                        except Exception:
-                            pass
-
                     try:
                         if current_mod.get("source") == "thunderstore":
-                            self._mod_manager.install_mod_thunderstore(game_key, current_mod, install_dir2, progress_cb)
+                            self._mod_manager.install_mod_thunderstore(game_key, current_mod, install_dir2)
                         else:
-                            self._mod_manager.install_mod(game_key, current_mod, install_dir2, progress_cb)
+                            self._mod_manager.install_mod(game_key, current_mod, install_dir2)
                     except ModConflictError as exc:
-                        progress_bar.after(0, progress_bar.pack_forget)
                         status_lbl.after(0, lambda msg=f"{name}: {exc}": status_lbl.configure(
                             text=msg, text_color="#ccaa44"))
                         action_btn.after(0, lambda: action_btn.configure(state="normal", text="Retry"))
                         action_btn.after(0, lambda: action_btn.pack(anchor="e"))
                         return
                     except Exception:
-                        progress_bar.after(0, progress_bar.pack_forget)
                         status_lbl.after(0, lambda n=name: status_lbl.configure(
                             text=f"Failed: {n}", text_color="#cc4444"))
                         action_btn.after(0, lambda: action_btn.configure(state="normal", text="Retry"))
@@ -2928,9 +3017,18 @@ class MoxiApp(ctk.CTk):
                         return
 
                 if on_install_done:
-                    progress_bar.after(0, on_install_done)
+                    installed_count = sum(
+                        1 for mid in planned_ids
+                        if mid not in before_ids and self._mod_manager.is_installed(game_key, mid)
+                    )
+                    self._stats.track_mod_install(game_key, installed_count)
+                    action_btn.after(0, on_install_done)
                 else:
-                    progress_bar.after(0, progress_bar.pack_forget)
+                    installed_count = sum(
+                        1 for mid in planned_ids
+                        if mid not in before_ids and self._mod_manager.is_installed(game_key, mid)
+                    )
+                    self._stats.track_mod_install(game_key, installed_count)
                     status_lbl.after(0, lambda: status_lbl.configure(text="Installed", text_color="#44cc88"))
                     def set_remove():
                         action_btn.configure(
@@ -3110,12 +3208,85 @@ class MoxiApp(ctk.CTk):
         # --- Data ---
         data_sec = section("Data")
 
+        def refresh_settings_page():
+            self._show_page("settings")
+
         def open_data_folder():
-            path = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi")
+            path = DATA_DIR
             os.makedirs(path, exist_ok=True)
             os.startfile(path)
 
         row(data_sec, "Open Moxi data folder", lambda p: action_btn(p, "Open Folder", open_data_folder))
+
+        def analytics_status_label():
+            consent = self._stats._settings.get("consent")
+            if consent is True:
+                return "Enabled"
+            if consent is False:
+                return "Disabled"
+            return "Not chosen"
+
+        def toggle_analytics_consent():
+            current = self._stats._settings.get("consent")
+            enable = current is not True
+            self._stats.set_consent(enable)
+            if enable:
+                self._stats.track_consent_accepted()
+                self._stats.track_app_started()
+            self._stats_consent_required = False
+            self._refresh_nav_state()
+            refresh_settings_page()
+
+        analytics_row = ctk.CTkFrame(data_sec, fg_color=CARD_BG, corner_radius=8, height=54)
+        analytics_row.pack(fill="x", pady=(0, 6))
+        analytics_row.pack_propagate(False)
+
+        ctk.CTkLabel(
+            analytics_row, text="Anonymous analytics",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            text_color=TEXT_ON, anchor="w"
+        ).pack(side="left", padx=16)
+
+        ctk.CTkLabel(
+            analytics_row, text=analytics_status_label(),
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            text_color=TEXT_DIM, anchor="e"
+        ).pack(side="right", padx=(0, 8))
+
+        action_btn(
+            analytics_row,
+            "Disable" if self._stats._settings.get("consent") is True else "Enable",
+            toggle_analytics_consent,
+            danger=self._stats._settings.get("consent") is True,
+        )
+
+        optimization_row = ctk.CTkFrame(data_sec, fg_color=CARD_BG, corner_radius=8, height=54)
+        optimization_row.pack(fill="x", pady=(0, 6))
+        optimization_row.pack_propagate(False)
+
+        ctk.CTkLabel(
+            optimization_row, text="Staggered loading optimization",
+            font=ctk.CTkFont(family="Segoe UI", size=12),
+            text_color=TEXT_ON, anchor="w"
+        ).pack(side="left", padx=16)
+
+        ctk.CTkLabel(
+            optimization_row,
+            text="On" if self._is_staggered_loading_enabled() else "Off",
+            font=ctk.CTkFont(family="Segoe UI", size=11),
+            text_color=TEXT_DIM, anchor="e"
+        ).pack(side="right", padx=(0, 8))
+
+        def toggle_staggered_loading():
+            self._set_staggered_loading_enabled(not self._is_staggered_loading_enabled())
+            refresh_settings_page()
+
+        action_btn(
+            optimization_row,
+            "Disable" if self._is_staggered_loading_enabled() else "Enable",
+            toggle_staggered_loading,
+            danger=self._is_staggered_loading_enabled(),
+        )
 
         def clear_cache():
             import json
@@ -3140,7 +3311,7 @@ class MoxiApp(ctk.CTk):
 
             def confirm():
                 try:
-                    db = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi", "installed.json")
+                    db = os.path.join(DATA_DIR, "installed.json")
                     if os.path.exists(db):
                         os.remove(db)
                     self._mod_manager._load_installed()
@@ -3187,6 +3358,81 @@ class MoxiApp(ctk.CTk):
                     pass
 
         row(data_sec, "Clear recently played history", lambda p: action_btn(p, "Clear History", reset_recently_played, danger=True))
+
+    def _build_stats_consent(self, parent):
+        wrap = ctk.CTkFrame(parent, fg_color=BG, corner_radius=0)
+        wrap.pack(fill="both", expand=True)
+
+        center = ctk.CTkFrame(wrap, fg_color="transparent")
+        center.place(relx=0.5, rely=0.5, anchor="center")
+
+        card = ctk.CTkFrame(center, fg_color=CARD_BG, corner_radius=14, width=760, height=420)
+        card.pack()
+        card.pack_propagate(False)
+
+        ctk.CTkLabel(
+            card,
+            text="Data Tracking Notice",
+            font=ctk.CTkFont(family="Segoe UI", size=28, weight="bold"),
+            text_color=ACCENT
+        ).pack(pady=(34, 14))
+
+        body = (
+            "Moxi can collect a small amount of anonymous usage data to help improve the app.\n\n"
+            "If you agree, Moxi will only track:\n"
+            "- when you boot up Moxi\n"
+            "- how long each session lasts so average time spent can be measured\n"
+            "- how many mods get installed\n\n"
+            "This data is meant to be safe and lightweight. If you do not agree, analytics will stay disabled and nothing will be tracked."
+        )
+
+        ctk.CTkLabel(
+            card,
+            text=body,
+            font=ctk.CTkFont(family="Segoe UI", size=15),
+            text_color=TEXT_ON,
+            justify="center",
+            wraplength=620
+        ).pack(padx=42, pady=(0, 24))
+
+        btn_row = ctk.CTkFrame(card, fg_color="transparent")
+        btn_row.pack(pady=(4, 0))
+
+        def accept():
+            self._stats.set_consent(True)
+            self._stats_consent_required = False
+            self._refresh_nav_state()
+            self._stats.track_consent_accepted()
+            self._stats.track_app_started()
+            self._show_page("dashboard")
+
+        def decline():
+            self._stats.set_consent(False)
+            self._stats_consent_required = False
+            self._refresh_nav_state()
+            self._show_page("dashboard")
+
+        accept_btn = ctk.CTkButton(
+            btn_row, text="I Agree",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+            fg_color=ACCENT, hover_color="#cc0040",
+            text_color="#ffffff", corner_radius=8,
+            border_width=0, width=140, height=36,
+            command=accept
+        )
+        accept_btn.pack(side="left", padx=(0, 10))
+        _glow_on_hover(accept_btn, targets=[accept_btn], is_btn=True)
+
+        cancel_btn = ctk.CTkButton(
+            btn_row, text="Cancel",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+            fg_color="#1e1e1e", hover_color="#2a2a2a",
+            text_color=TEXT_DIM, corner_radius=8,
+            border_width=0, width=140, height=36,
+            command=decline
+        )
+        cancel_btn.pack(side="left")
+        _glow_on_hover(cancel_btn, targets=[cancel_btn], is_btn=True)
 
     def _build_support_moxi(self, parent):
         wrap = ctk.CTkFrame(parent, fg_color=BG, corner_radius=0)
