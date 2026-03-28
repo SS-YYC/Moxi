@@ -31,6 +31,7 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Muck | Supported |
 | Risk of Rain 2 | Supported |
 | PEAK | Supported |
+| Schedule I | Supported |
 | BONELAB | Supported |
 | BONEWORKS | Supported |
 
