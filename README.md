@@ -8,6 +8,14 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 
 ---
 
+## Links
+
+- Website: https://kerbalmissile.github.io/MoxiWebsite/
+- Discord: https://discord.com/invite/Y53vwvQRDc
+- Releases: https://github.com/KerbalMissile/Moxi/releases
+
+---
+
 ## Supported Games
 
 | Game | Status |
@@ -116,14 +124,6 @@ Games listed in the Coming Soon section of the dashboard are managed through `Ga
 - CustomTkinter
 - Pillow
 - Requests
-
----
-
-## Links
-
-- Website: https://kerbalmissile.github.io/MoxiWebsite/
-- Discord: https://discord.com/invite/Y53vwvQRDc
-- Releases: https://github.com/KerbalMissile/Moxi/releases
 
 ---
 
