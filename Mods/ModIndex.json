@@ -289,6 +289,25 @@
           ]
         },
         {
+          "id": "epic_structure_loader",
+          "name": "Epic Structure Loader",
+           "dependencies": [
+            "nautilus"
+          ],
+          "author": "Kallie23",
+          "version": "1.0.2",
+          "support": "https://www.paypal.com/donate?token=8ouo045YpNkVv-zJ4grLWUrNkhsPltQbholSRDoIvzKlkQDWKf7k5B0g8-PjyvNiOmNRngA2DuIWK10j&locale.x=US",
+          "description": "A basic mod library for loading custom mod structures.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EpicStructureLoaderRENAMED.zip",
+              "filename": "EpicStructureLoaderRENAMED.dll",
+              "destination": "BepInEx",
+              "extract": true
+            }
+          ]
+        },
+        {
           "id": "more_torpedo_damage",
           "name": "More Torpedo Damage",
           "dependencies": [
