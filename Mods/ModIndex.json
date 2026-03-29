@@ -701,11 +701,12 @@
           "id": "pyrite",
           "name": "Pyrite",
           "author": "KerbalMissile",
+          "source": "github",
           "version": "1.0.0-Beta",
           "description": "A mod loader for the game Out of Ore, currently basic, can only do simple .ini files but I am expanding it.",
           "files": [
             {
-              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Pyrite_BETA_v1.0.0.zip",
+              "url": "https://github.com/KerbalMissile/Pyrite/raw/main/Pyrite_BETA_v1.0.0.zip",
               "filename": "Pyrite_BETA_v1.0.0.zip",
               "destination": "",
               "extract": true,
