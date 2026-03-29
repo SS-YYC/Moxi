@@ -303,7 +303,8 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EpicStructureLoaderRENAMED.zip",
               "filename": "EpicStructureLoaderRENAMED.dll",
               "destination": "BepInEx",
-              "extract": true
+              "extract": true,
+              "include_prefix": ""
             }
           ]
         },
