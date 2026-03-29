@@ -696,15 +696,22 @@
       ]
     },
     "out_of_ore": {
-      "github_bundles": [
+      "mods": [
         {
-          "url": "https://github.com/KerbalMissile/Pyrite/releases/download/v1.0.0-Beta/Pyrite_BETA_v1.0.0.zip",
+          "id": "pyrite",
+          "name": "Pyrite",
           "author": "KerbalMissile",
           "version": "1.0.0-Beta",
-          "destination": "",
-          "name_prefix": "",
-          "id_prefix": "kerbalmissile-",
-          "description_prefix": "Installed from GitHub bundle: "
+          "description": "A mod loader for the game Out of Ore, currently basic, can only do simple .ini files but I am expanding it.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Pyrite_BETA_v1.0.0.zip",
+              "filename": "Pyrite_BETA_v1.0.0.zip",
+              "destination": "",
+              "extract": true,
+              "include_prefix": "Pyrite"
+            }
+          ]
         }
       ]
     }
