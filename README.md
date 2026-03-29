@@ -34,6 +34,7 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 | Schedule I | Supported |
 | BONELAB | Supported |
 | BONEWORKS | Supported |
+| Out of Ore | Coming March 28th |
 
 ---
 
