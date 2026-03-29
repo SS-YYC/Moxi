@@ -524,6 +524,22 @@
               "destination": "BepInEx/plugins/EnableAchievements"
             }
           ]
+        },
+        {
+          "id": "terraforming_bz",
+          "name": "Terraforming BZ",
+          "author": "repkins",
+          "version": "1.4.5",
+          "source": "github",
+          "description": "Terraforming mod for Subnautica: Below Zero.",
+          "files": [
+            {
+              "url": "https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.5/TerraformingBZ_v145.zip",
+              "filename": "TerraformingBZ_v145.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
         }
       ]
     },
