@@ -274,6 +274,21 @@
           ]
         },
         {
+          "id": "solid_terrain",
+          "name": "Solid Terrain (BepInEx)",
+          "author": "MrPurple6411",
+          "version": "2.0.0.1",
+          "support": "https://www.paypal.com/donate?token=yU-3ScgxBAKIbO9K_kbPp0xFKKeTq1L74MWeDE0ezEohpE8rYFU9OAraG2J4t-qG71o-tRQhokKcKhCM&locale.x=US",
+          "description": "This mod increases the terrain collision loading distance by about 4-5x normal to attempt to stop Reapers, Crash fish and other creatures from being able to swim through the ground when not close to the player.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SolidTerrain.dll",
+              "filename": "SolidTerrain.dll",
+              "destination": "BepInEx/plugins/SolidTerrain"
+            }
+          ]
+        },
+        {
           "id": "more_torpedo_damage",
           "name": "More Torpedo Damage",
           "dependencies": [
