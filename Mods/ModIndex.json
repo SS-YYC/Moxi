@@ -497,6 +497,7 @@
           "name": "Simple SR mod library (Core mod)",
           "author": "Zion",
           "version": "6.0.0",
+          "support": "https://www.paypal.com/donate?token=00qXzp8Fb1lR3Z83E03dc1oSymqQ6TGGGrai72Chvg4j8FMETZee18fiJLeboVigCmPKSQLhx68QyeLN&locale.x=US",
           "description": "A mod library designed to make basic mods easier and simpler to make.",
           "files": [
             {
@@ -534,6 +535,7 @@
           ],
           "author": "Zion aka Kokoro",
           "version": "0.1.tomato",
+          "support": "https://www.paypal.com/donate?token=00qXzp8Fb1lR3Z83E03dc1oSymqQ6TGGGrai72Chvg4j8FMETZee18fiJLeboVigCmPKSQLhx68QyeLN&locale.x=US",
           "description": "This mod adds slimes with various abilities of velocity manipulation, along with some fun items that somewhat fit the theme.",
           "files": [
             {
