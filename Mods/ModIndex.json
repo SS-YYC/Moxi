@@ -694,6 +694,19 @@
           ]
         }
       ]
+    },
+    "out_of_ore": {
+      "github_bundles": [
+        {
+          "url": "https://github.com/KerbalMissile/Pyrite/releases/download/v1.0.0-Beta/Pyrite_BETA_v1.0.0.zip",
+          "author": "KerbalMissile",
+          "version": "1.0.0-Beta",
+          "destination": "",
+          "name_prefix": "",
+          "id_prefix": "kerbalmissile-",
+          "description_prefix": "Installed from GitHub bundle: "
+        }
+      ]
     }
   }
 }
