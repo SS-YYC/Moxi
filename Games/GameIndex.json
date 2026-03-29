@@ -1,6 +1,11 @@
 {
   "coming_soon": [
     {
+        "appid": "2009350",
+        "name": "Out of Ore",
+        "coming_date": "March 29th"
+    },
+    {
         "appid": "1966720",
         "name": "Lethal Company",
         "coming_date": "TBD"
