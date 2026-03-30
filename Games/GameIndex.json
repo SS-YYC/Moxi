@@ -1,6 +1,45 @@
 {
   "coming_soon": [
     {
+      "appid": "1696810",
+      "name": "RAILROADS Online",
+      "coming_date": "March 30th"
+    },
+    {
+        "appid": "1966720",
+        "name": "Lethal Company",
+        "coming_date": "TBD"
+    },
+    {
+        "appid": "377160",
+        "name": "Fallout 4",
+        "coming_date": "TBD"
+    },
+    {
+      "appid": "2168680",
+      "name": "Nuclear Option",
+      "coming_date": "TBD"
+    },
+    {
+      "appid": "361420",
+      "name": "Astroneer",
+      "coming_date": "TBD"
+    },
+    {
+        "appid": "275850",
+        "name": "No Man's Sky",
+        "coming_date": "TBD"
+    },
+    {
+        "appid": "2709570",
+        "name": "Supermarket Together",
+        "coming_date": "TBD"
+    }
+  ]
+}
+{
+  "coming_soon": [
+    {
       "appid": "4067130",
       "name": "Drifter Star: Evoltion",
       "coming_date": "March 30th"
