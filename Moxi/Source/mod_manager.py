@@ -12,9 +12,13 @@ from urllib.parse import urljoin
 
 DATA_DIR      = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi")
 INSTALLED_DB  = os.path.join(DATA_DIR, "installed.json")
+DEBUG_LOG_PATH = os.path.join(DATA_DIR, "mod_manager_debug.log")
 MOD_INDEX_URL  = "https://raw.githubusercontent.com/KerbalMissile/Moxi/main/Mods/ModIndex.json"
 GAME_INDEX_URL = "https://raw.githubusercontent.com/KerbalMissile/Moxi/main/Games/GameIndex.json"
 MOXI_REPO      = "KerbalMissile/Moxi"
+MANUAL_MOD_DESTS = {
+    "out_of_ore": "Mods",
+}
 
 
 class ModConflictError(Exception):
@@ -112,6 +116,16 @@ MODLOADER_CONFIGS = {
         "mod_dest":   "Mods",
         "subfolder":  "MelonLoader",
     },
+    "supermarket_together": {
+        "type":       "thunderstore_pkg",
+        "owner":      "BepInEx",
+        "name":       "BepInExPack",
+        "community":  "supermarket-together",
+        "version":    "5.4.2100",
+        "check_path": os.path.join("BepInEx", "core", "BepInEx.dll"),
+        "mod_dest":   os.path.join("BepInEx", "plugins"),
+        "subfolder":  "BepInExPack",
+    },
     "risk_of_rain_2": {
         "type":       "thunderstore_pkg",
         "owner":      "bbepis",
@@ -141,6 +155,10 @@ THUNDERSTORE_CONFIGS = {
     "boneworks": {
         "community": "boneworks",
         "mod_dest":  "Mods",
+    },
+    "supermarket_together": {
+        "community": "supermarket-together",
+        "mod_dest":  os.path.join("BepInEx", "plugins"),
     },
     "schedule_i": {
         "community": "schedule-i",
@@ -181,6 +199,19 @@ class ModManager:
         self._archive_cache = {}
         os.makedirs(DATA_DIR, exist_ok=True)
         self._load_installed()
+
+    def _log_debug(self, message):
+        line = f"[Moxi ModManager] {message}"
+        try:
+            print(line, flush=True)
+        except Exception:
+            pass
+        try:
+            os.makedirs(DATA_DIR, exist_ok=True)
+            with open(DEBUG_LOG_PATH, "a", encoding="utf-8") as f:
+                f.write(f"{line}\n")
+        except Exception:
+            pass
 
     def _load_installed(self):
         if os.path.exists(INSTALLED_DB):
@@ -250,7 +281,13 @@ class ModManager:
             if prefix and normalized != prefix and not normalized.startswith(prefix + "/"):
                 continue
 
-            dest_path = self._extract_archive_member(game_install_dir, dest_rel, normalized)
+            relative_member = normalized
+            if prefix:
+                relative_member = normalized[len(prefix):].strip("/")
+                if not relative_member:
+                    continue
+
+            dest_path = self._extract_archive_member(game_install_dir, dest_rel, relative_member)
             if dest_path:
                 planned.append(dest_path)
 
@@ -316,7 +353,13 @@ class ModManager:
             if prefix and normalized != prefix and not normalized.startswith(prefix + "/"):
                 continue
 
-            dest_path = self._extract_archive_member(game_install_dir, dest_rel, normalized)
+            relative_member = normalized
+            if prefix:
+                relative_member = normalized[len(prefix):].strip("/")
+                if not relative_member:
+                    continue
+
+            dest_path = self._extract_archive_member(game_install_dir, dest_rel, relative_member)
             if not dest_path:
                 continue
 
@@ -607,6 +650,9 @@ class ModManager:
         return os.path.exists(os.path.join(install_dir, cfg["check_path"]))
 
     def get_mod_dest(self, game_key):
+        manual_dest = MANUAL_MOD_DESTS.get(game_key)
+        if manual_dest:
+            return manual_dest
         cfg = MODLOADER_CONFIGS.get(game_key)
         return cfg["mod_dest"] if cfg else os.path.join("BepInEx", "plugins")
 
@@ -1058,53 +1104,98 @@ class ModManager:
     def install_mod(self, game_key, mod, game_install_dir, progress_cb=None):
         files = mod.get("files", [])
         installed_files = []
+        self._log_debug(
+            f"install_mod start game_key={game_key} mod_id={mod.get('id')} "
+            f"file_count={len(files)} install_dir={game_install_dir!r}"
+        )
 
         for i, file_entry in enumerate(files):
-            url          = self._resolve_file_url(file_entry)
-            filename = file_entry["filename"]
-            dest_rel = file_entry["destination"]
-            dest_dir = os.path.join(game_install_dir, dest_rel)
-            os.makedirs(dest_dir, exist_ok=True)
-            dest_path = os.path.join(dest_dir, filename)
+            try:
+                url = self._resolve_file_url(file_entry)
+                filename = file_entry["filename"]
+                dest_rel = file_entry["destination"]
+                dest_dir = os.path.join(game_install_dir, dest_rel)
+                os.makedirs(dest_dir, exist_ok=True)
+                dest_path = os.path.join(dest_dir, filename)
+                self._log_debug(
+                    f"install_mod file index={i} url={url!r} filename={filename!r} "
+                    f"destination={dest_rel!r} extract={bool(file_entry.get('extract'))} "
+                    f"include_prefix={file_entry.get('include_prefix')!r}"
+                )
 
-            if file_entry.get("extract"):
-                cache_key = url if mod.get("source") == "github" else None
-                def step_progress(val, index=i, total_files=len(files)):
-                    if progress_cb:
-                        progress_cb((index + val) / total_files)
-                buf = self._download_to_buffer(url, progress_cb=step_progress, timeout=30, cache_key=cache_key)
-                buf.seek(0)
-                with zipfile.ZipFile(buf) as zf:
-                    planned_files = self._planned_archive_paths(
-                        zf,
-                        game_install_dir,
-                        dest_rel,
-                        file_entry.get("include_prefix"),
-                    )
-                    self._check_file_conflicts(game_key, mod["id"], planned_files)
-                    zf.fp.seek(0)
-                    subset_files = self._extract_zip_subset_to_game(
-                        zf,
-                        game_install_dir,
-                        dest_rel,
-                        file_entry.get("include_prefix"),
-                    )
-                installed_files.extend(subset_files)
-            else:
-                r = self._session.get(url, stream=True, timeout=30)
-                r.raise_for_status()
-                total = int(r.headers.get("content-length", 0))
-                downloaded = 0
-                self._check_file_conflicts(game_key, mod["id"], [dest_path])
-                with open(dest_path, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        if chunk:
-                            f.write(chunk)
-                            downloaded += len(chunk)
-                            if progress_cb and total > 0:
-                                progress_cb((i + downloaded / total) / len(files))
+                if file_entry.get("extract"):
+                    cache_key = url if mod.get("source") == "github" else None
 
-                installed_files.append(dest_path)
+                    def step_progress(val, index=i, total_files=len(files)):
+                        if progress_cb:
+                            progress_cb((index + val) / total_files)
+
+                    buf = self._download_to_buffer(url, progress_cb=step_progress, timeout=30, cache_key=cache_key)
+                    buf.seek(0)
+                    with zipfile.ZipFile(buf) as zf:
+                        include_prefix = file_entry.get("include_prefix")
+                        effective_prefix = include_prefix
+                        planned_files = self._planned_archive_paths(
+                            zf,
+                            game_install_dir,
+                            dest_rel,
+                            effective_prefix,
+                        )
+                        if effective_prefix and not planned_files:
+                            self._log_debug(
+                                f"install_mod include_prefix matched no files, falling back to full archive mod_id={mod.get('id')} "
+                                f"include_prefix={effective_prefix!r}"
+                            )
+                            effective_prefix = None
+                            planned_files = self._planned_archive_paths(
+                                zf,
+                                game_install_dir,
+                                dest_rel,
+                                effective_prefix,
+                            )
+                        self._log_debug(
+                            f"install_mod planned_files mod_id={mod.get('id')} count={len(planned_files)} "
+                            f"sample={planned_files[:5]!r}"
+                        )
+                        if not planned_files:
+                            raise ValueError("Archive extraction matched no files.")
+                        self._check_file_conflicts(game_key, mod["id"], planned_files)
+                        zf.fp.seek(0)
+                        subset_files = self._extract_zip_subset_to_game(
+                            zf,
+                            game_install_dir,
+                            dest_rel,
+                            effective_prefix,
+                        )
+                    if not subset_files:
+                        raise ValueError("Archive extraction produced no files.")
+                    self._log_debug(
+                        f"install_mod extracted_files mod_id={mod.get('id')} count={len(subset_files)} "
+                        f"sample={subset_files[:5]!r}"
+                    )
+                    installed_files.extend(subset_files)
+                else:
+                    r = self._session.get(url, stream=True, timeout=30)
+                    r.raise_for_status()
+                    total = int(r.headers.get("content-length", 0))
+                    downloaded = 0
+                    self._check_file_conflicts(game_key, mod["id"], [dest_path])
+                    with open(dest_path, "wb") as f:
+                        for chunk in r.iter_content(chunk_size=8192):
+                            if chunk:
+                                f.write(chunk)
+                                downloaded += len(chunk)
+                                if progress_cb and total > 0:
+                                    progress_cb((i + downloaded / total) / len(files))
+
+                    installed_files.append(dest_path)
+                    self._log_debug(f"install_mod copied_file path={dest_path!r}")
+            except Exception as exc:
+                self._log_debug(
+                    f"install_mod failed game_key={game_key} mod_id={mod.get('id')} "
+                    f"file_index={i} error={exc!r}"
+                )
+                raise
 
         if game_key not in self.installed:
             self.installed[game_key] = {}
@@ -1116,6 +1207,9 @@ class ModManager:
             "enabled": True,
         }
         self._save_installed()
+        self._log_debug(
+            f"install_mod complete game_key={game_key} mod_id={mod.get('id')} installed_count={len(installed_files)}"
+        )
 
     def uninstall_mod(self, game_key, mod_id):
         entry = self.installed.get(game_key, {}).get(mod_id)

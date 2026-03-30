@@ -18,10 +18,12 @@ APP_SETTINGS_PATH = os.path.join(DATA_DIR, "app_settings.json")
 
 SUPPORTED_GAMES = {
     "1284190": {"name": "Planet Crafter",        "supported": True, "game_key": "planet_crafter"},
+    "2009350": {"name": "Out Of Ore",            "supported": True, "game_key": "out_of_ore"},
     "264710":  {"name": "Subnautica",             "supported": True, "game_key": "subnautica"},
     "848450":  {"name": "Subnautica: Below Zero", "supported": True, "game_key": "subnautica_bz"},
     "433340":  {"name": "Slime Rancher",          "supported": True, "game_key": "slime_rancher"},
     "1657630": {"name": "Slime Rancher 2",        "supported": True, "game_key": "slime_rancher_2"},
+    "2709570": {"name": "Supermarket Together",  "supported": True, "game_key": "supermarket_together"},
     "1366540": {"name": "Dyson Sphere Program",   "supported": True, "game_key": "dyson_sphere"},
     "1625450": {"name": "Muck",                   "supported": True, "game_key": "muck"},
     "632360":  {"name": "Risk of Rain 2",         "supported": True, "game_key": "risk_of_rain_2"},
@@ -39,9 +41,9 @@ CUSTOM_ART_URLS = {
 
 CURATED_MODS_REPO_URL = "https://github.com/KerbalMissile/MoxiDefaultMods"
 
-THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "boneworks", "peak", "schedule_i", "bonelab", "valheim", "scrap_mechanic"}
+THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "boneworks", "peak", "schedule_i", "bonelab", "supermarket_together", "valheim", "scrap_mechanic"}
 
-NEWLY_ADDED = {"boneworks", "bonelab", "muck", "peak", "risk_of_rain_2", "scrap_mechanic", "valheim"}
+NEWLY_ADDED = {"boneworks", "bonelab", "out_of_ore", "supermarket_together"}
 
 THUNDERSTORE_BLOCKLIST = {
     "schedule_i":    {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
@@ -51,6 +53,7 @@ THUNDERSTORE_BLOCKLIST = {
     "peak":          {"BepInEx-BepInExPack_PEAK", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "risk_of_rain_2": {"bbepis-BepInExPack", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "bonelab":       {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
+    "supermarket_together": {"BepInEx-BepInExPack", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "valheim":       {"denikson-BepInExPack_Valheim", "ebkr-r2modman", "Kesomannen-GaleModManager"},
     "scrap_mechanic": {"ebkr-r2modman", "Kesomannen-GaleModManager"},
 }
@@ -59,7 +62,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.2.1"
+MOXI_VERSION = "2.4.0"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
