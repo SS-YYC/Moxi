@@ -735,15 +735,40 @@
       ]
     },
     "railroads_online": {
-      "github_bundles": [
+      "mods": [
         {
-          "url": "https://github.com/KerbalMissile/RRO-Mods-KM/releases/download/v1.0.0/AllMods-v1.0.0.zip",
+          "id": "realrailroading",
+          "name": "Real Railroading",
           "author": "KerbalMissile",
+          "source": "github",
           "version": "1.0.0",
-          "destination": "Mods",
-          "name_prefix": "",
-          "id_prefix": "KerbalMissile-",
-          "description_prefix": "Installed from GitHub bundle: "
+          "description": "Improves the physics and realism of railroading, currently only makes sand more useful.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/RealRailroading-v1.0.0.zip",
+              "filename": "RealRailroading-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "RealRailroading"
+            }
+          ]
+        },
+        {
+          "id": "timewarp",
+          "name": "Timewarp",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Allows you to speed up time in game by 1-4x speed, keybinds are ctrl + F1, F2, F3, or F4.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/Timewarp-v1.0.0.zip",
+              "filename": "Timewarp-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "Timewarp"
+            }
+          ]
         }
       ]
     }
