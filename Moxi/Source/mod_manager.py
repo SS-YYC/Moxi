@@ -28,6 +28,14 @@ class ModConflictError(Exception):
         super().__init__(f"Conflicts with installed mod(s): {', '.join(mods)}")
 
 MODLOADER_CONFIGS = {
+    "railroads_online": {
+        "type":        "github_latest",
+        "repo":        "KerbalMissile/RROML",
+        "asset":       "RROML-v",
+        "asset_match": "startswith",
+        "check_path":  "RROML",
+        "mod_dest":    "",
+    },
     "planet_crafter": {
         "type":       "static",
         "url":        "https://github.com/BepInEx/BepInEx/releases/download/v5.4.23.2/BepInEx_win_x64_5.4.23.2.zip",
@@ -335,9 +343,16 @@ class ModManager:
             if not dest_path:
                 continue
 
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            with zf.open(member) as src, open(dest_path, "wb") as dst:
-                dst.write(src.read())
+            try:
+                self._log_debug(f"extract_zip member={member!r} dest_path={dest_path!r}")
+                os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                with zf.open(member) as src, open(dest_path, "wb") as dst:
+                    dst.write(src.read())
+            except Exception as exc:
+                self._log_debug(
+                    f"extract_zip failed member={member!r} dest_path={dest_path!r} error={exc!r}"
+                )
+                raise
             installed_files.append(dest_path)
 
         return installed_files
@@ -363,9 +378,20 @@ class ModManager:
             if not dest_path:
                 continue
 
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            with zf.open(member) as src, open(dest_path, "wb") as dst:
-                dst.write(src.read())
+            try:
+                self._log_debug(
+                    f"extract_zip_subset member={member!r} relative_member={relative_member!r} "
+                    f"dest_path={dest_path!r} include_prefix={include_prefix!r}"
+                )
+                os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+                with zf.open(member) as src, open(dest_path, "wb") as dst:
+                    dst.write(src.read())
+            except Exception as exc:
+                self._log_debug(
+                    f"extract_zip_subset failed member={member!r} relative_member={relative_member!r} "
+                    f"dest_path={dest_path!r} include_prefix={include_prefix!r} error={exc!r}"
+                )
+                raise
             installed_files.append(dest_path)
 
         return installed_files

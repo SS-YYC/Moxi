@@ -18,6 +18,7 @@ APP_SETTINGS_PATH = os.path.join(DATA_DIR, "app_settings.json")
 
 SUPPORTED_GAMES = {
     "1284190": {"name": "Planet Crafter",        "supported": True, "game_key": "planet_crafter"},
+    "1696810": {"name": "Railroads Online",      "supported": True, "game_key": "railroads_online"},
     "2009350": {"name": "Out Of Ore",            "supported": True, "game_key": "out_of_ore"},
     "264710":  {"name": "Subnautica",             "supported": True, "game_key": "subnautica"},
     "848450":  {"name": "Subnautica: Below Zero", "supported": True, "game_key": "subnautica_bz"},
@@ -43,7 +44,7 @@ CURATED_MODS_REPO_URL = "https://github.com/KerbalMissile/MoxiDefaultMods"
 
 THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "boneworks", "peak", "schedule_i", "bonelab", "supermarket_together", "valheim", "scrap_mechanic"}
 
-NEWLY_ADDED = {"boneworks", "bonelab", "out_of_ore", "supermarket_together"}
+NEWLY_ADDED = {"boneworks", "bonelab", "out_of_ore", "railroads_online", "supermarket_together"}
 
 THUNDERSTORE_BLOCKLIST = {
     "schedule_i":    {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
@@ -62,7 +63,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.4.0"
+MOXI_VERSION = "2.5.0"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
