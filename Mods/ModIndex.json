@@ -733,6 +733,19 @@
           ]
         }
       ]
+    },
+    "railroads_online": {
+      "github_bundles": [
+        {
+          "url": "https://github.com/KerbalMissile/RRO-Mods-KM/releases/download/v1.0.0/AllMods-v1.0.0.zip",
+          "author": "KerbalMissile",
+          "version": "1.0.0",
+          "destination": "Mods",
+          "name_prefix": "",
+          "id_prefix": "KerbalMissile-",
+          "description_prefix": "Installed from GitHub bundle: "
+        }
+      ]
     }
   }
 }
