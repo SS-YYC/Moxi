@@ -65,6 +65,11 @@ Download the latest installer from the [releases page](https://github.com/Kerbal
 
 ---
 
+**Incompatibilies:**
+- Norton (Norton CyberCapture causes crashes)
+
+---
+
 ## For Mod Authors
 
 Mods are distributed through a JSON index hosted in this repository. To add your mod, create an entry in `Mods/ModIndex.json` following this structure:
