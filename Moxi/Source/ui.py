@@ -63,7 +63,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.5.0"
+MOXI_VERSION = "2.5.1"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"
@@ -2478,6 +2478,70 @@ class MoxiApp(ctk.CTk):
                 border_width=0, width=70, height=26, command=_dismiss_notif
             ).pack(side="right", padx=(0, 10))
 
+        def _show_rro_modloader_update_notif(update_info):
+            game_data = self._detected_map.get(game_key)
+            install_dir = game_data["install_dir"] if game_data else None
+            if not install_dir:
+                return
+
+            installed_version = update_info.get("installed_version", "")
+            latest_version = update_info.get("latest_version", "")
+
+            _dismiss_notif()
+            notif_bar.configure(height=40)
+            notif_bar.pack_propagate(False)
+            bar = ctk.CTkFrame(notif_bar, fg_color="#1e0f05", corner_radius=0)
+            bar.pack(fill="both", expand=True)
+            ctk.CTkLabel(
+                bar,
+                text=f"RROML update available: {installed_version} -> {latest_version}. Update now?",
+                font=ctk.CTkFont(family="Segoe UI", size=11),
+                text_color="#e6b15c",
+                anchor="w",
+            ).pack(side="left", padx=14)
+
+            update_btn = ctk.CTkButton(
+                bar,
+                text="Update",
+                font=ctk.CTkFont(family="Segoe UI", size=10),
+                fg_color="#7a4a12",
+                hover_color="#99611f",
+                text_color="#ffffff",
+                corner_radius=4,
+                border_width=0,
+                width=80,
+                height=26,
+            )
+            update_btn.pack(side="right", padx=(0, 4))
+
+            ctk.CTkButton(
+                bar,
+                text="Later",
+                font=ctk.CTkFont(family="Segoe UI", size=10),
+                fg_color="transparent",
+                hover_color="#2a1d10",
+                text_color="#666666",
+                corner_radius=4,
+                border_width=0,
+                width=70,
+                height=26,
+                command=_dismiss_notif,
+            ).pack(side="right", padx=(0, 6))
+
+            def _run_update():
+                update_btn.after(0, lambda: update_btn.configure(state="disabled", text="Updating..."))
+                try:
+                    self._mod_manager.install_modloader("railroads_online", install_dir)
+                except Exception:
+                    notif_bar.after(0, lambda: _show_error_banner("Failed to update RROML"))
+                    status_lbl.after(0, lambda: status_lbl.configure(text="RROML update failed", text_color="#cc4444"))
+                    return
+
+                notif_bar.after(0, _dismiss_notif)
+                status_lbl.after(0, lambda: status_lbl.configure(text=f"RROML updated to {latest_version}", text_color="#44cc88"))
+
+            update_btn.configure(command=lambda: threading.Thread(target=_run_update, daemon=True).start())
+
         def _import_manual(kind):
             from tkinter import filedialog
 
@@ -2659,6 +2723,22 @@ class MoxiApp(ctk.CTk):
                     w.destroy()
                 notif_bar.configure(height=0)
                 notif_bar.pack_propagate(False)
+
+            if gk == "railroads_online":
+                game_data = self._detected_map.get(gk)
+                install_dir = game_data["install_dir"] if game_data else None
+
+                def _run_modloader_update_check():
+                    try:
+                        update_info = self._mod_manager.get_modloader_update_info(gk, install_dir)
+                    except Exception:
+                        return
+                    if not update_info:
+                        return
+                    if self._active_frame and state["game_key"] == gk:
+                        list_container.after(0, lambda info=update_info: _show_rro_modloader_update_notif(info))
+
+                threading.Thread(target=_run_modloader_update_check, daemon=True).start()
 
         def _do_refresh():
             if self._index_loading:

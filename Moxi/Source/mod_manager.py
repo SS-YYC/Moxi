@@ -12,12 +12,23 @@ from urllib.parse import urljoin
 
 DATA_DIR      = os.path.join(os.environ.get("LOCALAPPDATA", ""), "Moxi")
 INSTALLED_DB  = os.path.join(DATA_DIR, "installed.json")
+MODLOADER_STATE_DB = os.path.join(DATA_DIR, "modloaders.json")
 DEBUG_LOG_PATH = os.path.join(DATA_DIR, "mod_manager_debug.log")
 MOD_INDEX_URL  = "https://raw.githubusercontent.com/KerbalMissile/Moxi/main/Mods/ModIndex.json"
 GAME_INDEX_URL = "https://raw.githubusercontent.com/KerbalMissile/Moxi/main/Games/GameIndex.json"
 MOXI_REPO      = "KerbalMissile/Moxi"
 MANUAL_MOD_DESTS = {
     "out_of_ore": "Mods",
+}
+
+CONFIG_SEARCH_CONFIGS = {
+    "railroads_online": {
+        "dir_parts": ("RROML", "Configs"),
+        "extensions": (".json",),
+        "exclude_substrings": ("-state",),
+        "min_score": 8,
+        "recursive": True,
+    },
 }
 
 
@@ -202,11 +213,13 @@ THUNDERSTORE_CONFIGS = {
 class ModManager:
     def __init__(self):
         self.installed = {}
+        self.modloader_state = {}
         self._session = requests.Session()
         self._thunderstore_listing_cache = {}
         self._archive_cache = {}
         os.makedirs(DATA_DIR, exist_ok=True)
         self._load_installed()
+        self._load_modloader_state()
 
     def _log_debug(self, message):
         line = f"[Moxi ModManager] {message}"
@@ -234,6 +247,41 @@ class ModManager:
     def _save_installed(self):
         with open(INSTALLED_DB, "w") as f:
             json.dump(self.installed, f, indent=2)
+
+    def _load_modloader_state(self):
+        if os.path.exists(MODLOADER_STATE_DB):
+            try:
+                with open(MODLOADER_STATE_DB, "r", encoding="utf-8") as f:
+                    self.modloader_state = json.load(f)
+            except Exception:
+                self.modloader_state = {}
+        else:
+            self.modloader_state = {}
+
+    def _save_modloader_state(self):
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(MODLOADER_STATE_DB, "w", encoding="utf-8") as f:
+            json.dump(self.modloader_state, f, indent=2)
+
+    def _set_modloader_version(self, game_key, version):
+        state = self.modloader_state.setdefault(game_key, {})
+        state["version"] = version or ""
+        self._log_debug(
+            f"Saving modloader version game_key={game_key!r} version={state['version']!r} "
+            f"path={MODLOADER_STATE_DB!r}"
+        )
+        self._save_modloader_state()
+
+    def _infer_version_from_asset_name(self, asset_name):
+        if not asset_name:
+            return ""
+        base = os.path.basename(asset_name)
+        stem, _ = os.path.splitext(base)
+        match = re.search(r"v?\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?", stem)
+        return match.group(0) if match else stem
+
+    def get_stored_modloader_version(self, game_key):
+        return self.modloader_state.get(game_key, {}).get("version", "")
 
     def _get_thunderstore_config(self, key_or_community):
         cfg = THUNDERSTORE_CONFIGS.get(key_or_community)
@@ -675,6 +723,148 @@ class ModManager:
             return True
         return os.path.exists(os.path.join(install_dir, cfg["check_path"]))
 
+    def _fetch_github_latest_release(self, repo):
+        api_url = f"https://api.github.com/repos/{repo}/releases/latest"
+        response = requests.get(api_url, timeout=10)
+        response.raise_for_status()
+        return response.json()
+
+    def _get_modloader_release_info(self, game_key):
+        cfg = MODLOADER_CONFIGS.get(game_key)
+        if not cfg:
+            raise ValueError(f"No modloader config for: {game_key}")
+
+        if game_key == "railroads_online":
+            release = self._fetch_github_latest_release(cfg["repo"])
+            assets = release.get("assets", [])
+            zip_assets = [asset for asset in assets if asset.get("name", "").lower().endswith(".zip")]
+            if not zip_assets:
+                raise ValueError(f"No zip asset found in latest release for {cfg['repo']}")
+            asset = zip_assets[0]
+            version = (
+                release.get("tag_name")
+                or release.get("name")
+                or self._infer_version_from_asset_name(asset.get("name", ""))
+            )
+            self._log_debug(
+                "Resolved RROML release "
+                f"repo={cfg['repo']!r} tag={release.get('tag_name')!r} asset={asset.get('name')!r} "
+                f"version={version!r}"
+            )
+            return {
+                "download_url": asset["browser_download_url"],
+                "version": version,
+                "asset_name": asset.get("name", ""),
+            }
+
+        if cfg["type"] == "static":
+            version = cfg.get("version")
+            if not version:
+                match = re.search(r"/download/([^/]+)/", cfg["url"])
+                version = match.group(1) if match else ""
+            return {
+                "download_url": cfg["url"],
+                "version": version,
+            }
+
+        if cfg["type"] == "thunderstore_pkg":
+            owner     = cfg["owner"]
+            name      = cfg["name"]
+            community = cfg["community"]
+            api_url   = f"https://thunderstore.io/c/{community}/api/v1/package/{owner}/{name}/"
+            r = requests.get(api_url, timeout=10)
+            r.raise_for_status()
+            versions = r.json().get("versions", [])
+            if not versions:
+                raise ValueError(f"No versions found for Thunderstore pkg {owner}/{name}")
+            preferred_version = cfg.get("version")
+            if preferred_version:
+                match = next((v for v in versions if v.get("version_number") == preferred_version), None)
+                if not match:
+                    raise ValueError(
+                        f"Requested Thunderstore version {preferred_version} not found for {owner}/{name}"
+                    )
+                return {
+                    "download_url": match["download_url"],
+                    "version": match.get("version_number", preferred_version),
+                }
+            latest = versions[0]
+            return {
+                "download_url": latest["download_url"],
+                "version": latest.get("version_number", ""),
+            }
+
+        if cfg["type"] == "github_latest":
+            import platform
+
+            release = self._fetch_github_latest_release(cfg["repo"])
+            assets = release.get("assets", [])
+
+            if cfg.get("arch_detect"):
+                bits = platform.architecture()[0]
+                asset_name = cfg["asset"] if bits == "64bit" else cfg.get("asset_x86", cfg["asset"])
+            else:
+                asset_name = cfg["asset"]
+
+            match_mode = cfg.get("asset_match", "exact")
+            for asset in assets:
+                name = asset["name"]
+                if match_mode == "startswith" and name.startswith(asset_name) and name.endswith(".zip"):
+                    return {
+                        "download_url": asset["browser_download_url"],
+                        "version": release.get("tag_name") or release.get("name") or name,
+                    }
+                if match_mode == "exact" and name == asset_name:
+                    return {
+                        "download_url": asset["browser_download_url"],
+                        "version": release.get("tag_name") or release.get("name") or name,
+                    }
+
+            raise ValueError(f"No matching asset for {cfg['repo']}: '{asset_name}'")
+
+        raise ValueError(f"Unknown modloader type: {cfg['type']}")
+
+    def get_modloader_update_info(self, game_key, install_dir):
+        if game_key != "railroads_online":
+            return None
+        if not install_dir or not self.check_modloader(game_key, install_dir):
+            return None
+
+        installed_version = self.get_stored_modloader_version(game_key)
+        if not installed_version:
+            return None
+
+        latest = self._get_modloader_release_info(game_key)
+        latest_version = latest.get("version", "")
+        if not latest_version or latest_version == installed_version:
+            return None
+
+        return {
+            "installed_version": installed_version,
+            "latest_version": latest_version,
+            "download_url": latest.get("download_url", ""),
+            "update_available": True,
+        }
+
+    def _clear_directory_except(self, target_dir, keep_names=()):
+        if not os.path.isdir(target_dir):
+            return
+
+        keep = {name.lower() for name in keep_names}
+        for entry in os.listdir(target_dir):
+            if entry.lower() in keep:
+                continue
+            path = os.path.join(target_dir, entry)
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            else:
+                os.remove(path)
+
+    def _prepare_modloader_update_target(self, game_key, install_dir):
+        if game_key != "railroads_online":
+            return
+        self._clear_directory_except(os.path.join(install_dir, "RROML"), keep_names={"Mods"})
+
     def get_mod_dest(self, game_key):
         manual_dest = MANUAL_MOD_DESTS.get(game_key)
         if manual_dest:
@@ -776,61 +966,16 @@ class ModManager:
         return mod_id
 
     def _resolve_modloader_url(self, game_key):
-        import platform
-        cfg = MODLOADER_CONFIGS.get(game_key)
-        if not cfg:
-            raise ValueError(f"No modloader config for: {game_key}")
-
-        if cfg["type"] == "static":
-            return cfg["url"]
-
-        if cfg["type"] == "thunderstore_pkg":
-            owner     = cfg["owner"]
-            name      = cfg["name"]
-            community = cfg["community"]
-            api_url   = f"https://thunderstore.io/c/{community}/api/v1/package/{owner}/{name}/"
-            r = requests.get(api_url, timeout=10)
-            r.raise_for_status()
-            versions = r.json().get("versions", [])
-            if not versions:
-                raise ValueError(f"No versions found for Thunderstore pkg {owner}/{name}")
-            preferred_version = cfg.get("version")
-            if preferred_version:
-                match = next((v for v in versions if v.get("version_number") == preferred_version), None)
-                if not match:
-                    raise ValueError(
-                        f"Requested Thunderstore version {preferred_version} not found for {owner}/{name}"
-                    )
-                return match["download_url"]
-            return versions[0]["download_url"]
-
-        if cfg["type"] == "github_latest":
-            api_url = f"https://api.github.com/repos/{cfg['repo']}/releases/latest"
-            r = requests.get(api_url, timeout=10)
-            r.raise_for_status()
-            assets = r.json().get("assets", [])
-
-            if cfg.get("arch_detect"):
-                bits = platform.architecture()[0]
-                asset_name = cfg["asset"] if bits == "64bit" else cfg.get("asset_x86", cfg["asset"])
-            else:
-                asset_name = cfg["asset"]
-
-            match_mode = cfg.get("asset_match", "exact")
-            for asset in assets:
-                name = asset["name"]
-                if match_mode == "startswith" and name.startswith(asset_name) and name.endswith(".zip"):
-                    return asset["browser_download_url"]
-                elif match_mode == "exact" and name == asset_name:
-                    return asset["browser_download_url"]
-
-            raise ValueError(f"No matching asset for {cfg['repo']}: '{asset_name}'")
-
-        raise ValueError(f"Unknown modloader type: {cfg['type']}")
+        return self._get_modloader_release_info(game_key)["download_url"]
 
     def install_modloader(self, game_key, install_dir, progress_cb=None):
-        url = self._resolve_modloader_url(game_key)
+        release_info = self._get_modloader_release_info(game_key)
+        url = release_info["download_url"]
         cfg = MODLOADER_CONFIGS.get(game_key, {})
+        self._log_debug(
+            f"Installing modloader game_key={game_key!r} install_dir={install_dir!r} "
+            f"url={url!r} version={release_info.get('version', '')!r}"
+        )
         r   = requests.get(url, stream=True, timeout=60)
         r.raise_for_status()
 
@@ -849,6 +994,7 @@ class ModManager:
         subfolder = cfg.get("subfolder", "")
 
         with zipfile.ZipFile(buf) as zf:
+            self._prepare_modloader_update_target(game_key, install_dir)
             if subfolder:
                 # Strip the leading subfolder prefix (e.g. BepInExPack_Valheim/)
                 prefix = subfolder.rstrip("/") + "/"
@@ -867,6 +1013,11 @@ class ModManager:
                             dst.write(src.read())
             else:
                 zf.extractall(install_dir)
+
+        version = release_info.get("version", "") or self._infer_version_from_asset_name(
+            release_info.get("asset_name", "")
+        )
+        self._set_modloader_version(game_key, version)
 
     def check_bepinex(self, install_dir):
         dll = os.path.join(install_dir, "BepInEx", "core", "BepInEx.dll")
@@ -1342,15 +1493,34 @@ class ModManager:
         return tokens, exact_names
 
     def get_mod_config_path(self, game_key, mod_id, game_install_dir):
-        config_dir = os.path.join(game_install_dir, "BepInEx", "config")
+        search_cfg = CONFIG_SEARCH_CONFIGS.get(game_key, {})
+        config_dir = os.path.join(
+            game_install_dir,
+            *(search_cfg.get("dir_parts") or ("BepInEx", "config")),
+        )
         if not os.path.isdir(config_dir):
             return None
 
-        candidates = [
-            os.path.join(config_dir, name)
-            for name in os.listdir(config_dir)
-            if name.lower().endswith((".cfg", ".config", ".ini", ".txt"))
-        ]
+        extensions = tuple(ext.lower() for ext in (search_cfg.get("extensions") or (".cfg", ".config", ".ini", ".txt")))
+        exclude_substrings = tuple(part.lower() for part in (search_cfg.get("exclude_substrings") or ()))
+
+        if search_cfg.get("recursive"):
+            candidates = []
+            for root, _, files in os.walk(config_dir):
+                for name in files:
+                    lower_name = name.lower()
+                    if not lower_name.endswith(extensions):
+                        continue
+                    if any(part in lower_name for part in exclude_substrings):
+                        continue
+                    candidates.append(os.path.join(root, name))
+        else:
+            candidates = [
+                os.path.join(config_dir, name)
+                for name in os.listdir(config_dir)
+                if name.lower().endswith(extensions)
+                and not any(part in name.lower() for part in exclude_substrings)
+            ]
         if not candidates:
             return None
 
@@ -1358,6 +1528,7 @@ class ModManager:
         if not tokens and not exact_names:
             return None
 
+        min_score = int(search_cfg.get("min_score", 20))
         best_path = None
         best_score = 0
         for path in candidates:
@@ -1404,7 +1575,7 @@ class ModManager:
                 best_score = score
                 best_path = path
 
-        return best_path if best_score >= 20 else None
+        return best_path if best_score >= min_score else None
 
     def read_text_file(self, path):
         with open(path, "r", encoding="utf-8", errors="replace") as f:
