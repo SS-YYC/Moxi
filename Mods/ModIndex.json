@@ -470,6 +470,23 @@
               "extract": true
             }
           ]
+        },
+        {
+          "id": "seamoth_module_expansion",
+          "name": "SeamothModuleExpansion (BepInEx)",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "aedenthorn",
+          "version": "0.4.0",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport.dll",
+              "filename": "BedTeleport.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
         }
       ]
     },
@@ -767,6 +784,23 @@
               "destination": "Mods",
               "extract": true,
               "include_prefix": "Timewarp"
+            }
+          ]
+        },
+        {
+          "id": "slightly_better_visuals",
+          "name": "Slightly Better Visuals",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Slightly imrpoves the visuals by changing the brightness & contrast, it is more of an opinion but I like the way it looks.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/Slightly-Better-Visuals-v1.0.0.zip",
+              "filename": "Slightly-Better-Visuals-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "SlightlyBetterVisuals"
             }
           ]
         }
