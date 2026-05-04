@@ -803,6 +803,23 @@
               "include_prefix": "SlightlyBetterVisuals"
             }
           ]
+        },
+        {
+          "id": "ue_bridge",
+          "name": "UEBridge",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Exposes the names of certain things inside of the .pak's and .exe's, currently no information on them can be exposed as of v1.0.0 of UEBridge.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/UEBridgeMod-v1.0.0.zip",
+              "filename": "UEBridgeMod-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "UEBridge"
+            }
+          ]
         }
       ]
     }
