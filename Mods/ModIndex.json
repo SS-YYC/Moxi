@@ -576,6 +576,21 @@
               "extract": true
             }
           ]
+        },
+        {
+          "id": "third_person_camera",
+          "name": "Third Person Camera",
+          "author": "uregven",
+          "version": "1",
+          "description": "Simple UE4SS mod that allows you toggle third person with X.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ThirdPersonCamera.zip",
+              "filename": "ThirdPersonCamera.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
         }
       ]
     },
