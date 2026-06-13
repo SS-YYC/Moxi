@@ -572,7 +572,7 @@
             {
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PassiveCreatures_v2.1.0.zip",
               "filename": "PassiveCreatures_v2.1.0.zip",
-              "destination": "Binaries/Win64/ue4ss/Mods",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
               "extract": true
             }
           ]
