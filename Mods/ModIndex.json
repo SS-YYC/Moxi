@@ -591,6 +591,39 @@
               "extract": true
             }
           ]
+        },
+        {
+          "id": "sdf",
+          "name": "Subnautica Data Framework (SDF)",
+          "author": "LimoDerEchte",
+          "version": "0.1.3-alpha",
+          "description": "The SDF provides tooling to add content to Subnautica 2 in a data driven way with minimal usage of complex modding tools. It provides a simple file format for mod creators to use and will, in the future, also support a Lua and potentially C++ API.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SDF_Alpha_0.1.3.zip",
+              "filename": "SDF_Alpha_0.1.3.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "realistic_survival",
+          "name": "Realistic Survival",
+          "dependencies": [
+            "sdf"
+          ],
+          "author": "TerryTie - addi-4th",
+          "version": "1.7",
+          "description": "A mod to make survival gameplay in Subnautica 2 more immersive and more rewarding.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RealisticCraft.zip",
+              "filename": "RealisticCraft.zip",
+              "destination": "",
+              "extract": true
+            }
+          ]
         }
       ]
     },
