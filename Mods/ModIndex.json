@@ -565,12 +565,12 @@
         {
           "id": "passive_creatures",
           "name": "Passive Creatures",
-          "author": "Unknown",
-          "version": "2.1.0",
-          "description": "Multiplayer Beta - Prevents certain creatures from being aggressive and attacking the player.",
+          "author": "ksxkshan",
+          "version": "2.1.0 - Multiplayer Beta",
+          "description": "Peaceful-mode toggle for Subnautica 2: hostile creatures ignore the player and vehicles. Toggle on/off with Ctrl+Shift+T.",
           "files": [
             {
-              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PassiveCreatures%20v2.1.0.zip",
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PassiveCreatures_v2.1.0.zip",
               "filename": "PassiveCreatures_v2.1.0.zip",
               "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
               "extract": true
