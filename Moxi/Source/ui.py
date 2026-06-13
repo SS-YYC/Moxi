@@ -22,6 +22,7 @@ SUPPORTED_GAMES = {
     "2009350": {"name": "Out Of Ore",            "supported": True, "game_key": "out_of_ore"},
     "264710":  {"name": "Subnautica",             "supported": True, "game_key": "subnautica"},
     "848450":  {"name": "Subnautica: Below Zero", "supported": True, "game_key": "subnautica_bz"},
+    "1962700":  {"name": "Subnautica 2",          "supported": True, "game_key": "subnautica_2"},
     "433340":  {"name": "Slime Rancher",          "supported": True, "game_key": "slime_rancher"},
     "1657630": {"name": "Slime Rancher 2",        "supported": True, "game_key": "slime_rancher_2"},
     "2709570": {"name": "Supermarket Together",  "supported": True, "game_key": "supermarket_together"},
@@ -44,7 +45,7 @@ CURATED_MODS_REPO_URL = "https://github.com/KerbalMissile/MoxiDefaultMods"
 
 THUNDERSTORE_GAMES = {"dyson_sphere", "muck", "risk_of_rain_2", "boneworks", "peak", "schedule_i", "bonelab", "supermarket_together", "valheim", "scrap_mechanic"}
 
-NEWLY_ADDED = {"boneworks", "bonelab", "out_of_ore", "railroads_online", "supermarket_together"}
+NEWLY_ADDED = {"subnautica_2"}
 
 THUNDERSTORE_BLOCKLIST = {
     "schedule_i":    {"LavaGang-MelonLoader", "ebkr-r2modman", "Kesomannen-GaleModManager"},
@@ -63,7 +64,7 @@ GAME_KEY_TO_NAME    = {v["game_key"]: v["name"] for v in SUPPORTED_GAMES.values(
 GAME_NAMES          = [v["name"] for v in SUPPORTED_GAMES.values() if v["supported"]]
 GAME_NAMES_ALL      = [v["name"] for v in SUPPORTED_GAMES.values()]
 
-MOXI_VERSION = "2.5.1"
+MOXI_VERSION = "2.6.1"
 MOXI_REPO    = "KerbalMissile/Moxi"
 
 BG       = "#111111"

@@ -67,6 +67,16 @@ MODLOADER_CONFIGS = {
         "check_path": os.path.join("BepInEx", "core", "BepInEx.dll"),
         "mod_dest":   os.path.join("BepInEx", "plugins"),
     },
+    "subnautica_2": {
+        "type":          "github_latest",
+        "repo":          "Subnautica2Modding/Subnautica2-UE4SS",
+        "asset":         "UE4SS_v",
+        "asset_match":   "startswith",
+        "check_path":    os.path.join("Subnautica2", "Binaries", "Win64", "ue4ss", "UE4SS.dll"),
+        "mod_dest":      os.path.join("Subnautica2", "Binaries", "Win64", "ue4ss", "Mods"),
+        "install_subdir": os.path.join("Subnautica2", "Binaries", "Win64"),
+        "mod_format":    "ue4ss",
+    },
     "slime_rancher": {
         "type":       "github_latest",
         "repo":       "SlimeRancherModding/SRML",
@@ -331,8 +341,10 @@ class ModManager:
         prefix = include_prefix.replace("\\", "/").strip("/") if include_prefix else ""
 
         for member in zf.namelist():
+            if member.endswith("/"):
+                continue
             normalized = member.replace("\\", "/").strip("/")
-            if not normalized or normalized.endswith("/"):
+            if not normalized:
                 continue
             if prefix and normalized != prefix and not normalized.startswith(prefix + "/"):
                 continue
@@ -344,7 +356,7 @@ class ModManager:
                     continue
 
             dest_path = self._extract_archive_member(game_install_dir, dest_rel, relative_member)
-            if dest_path:
+            if dest_path and not dest_path.endswith(os.sep):
                 planned.append(dest_path)
 
         return planned
@@ -410,8 +422,10 @@ class ModManager:
         prefix = include_prefix.replace("\\", "/").strip("/") if include_prefix else ""
 
         for member in zf.namelist():
+            if member.endswith("/"):
+                continue
             normalized = member.replace("\\", "/").strip("/")
-            if not normalized or normalized.endswith("/"):
+            if not normalized:
                 continue
             if prefix and normalized != prefix and not normalized.startswith(prefix + "/"):
                 continue
@@ -424,6 +438,8 @@ class ModManager:
 
             dest_path = self._extract_archive_member(game_install_dir, dest_rel, relative_member)
             if not dest_path:
+                continue
+            if os.path.isdir(dest_path):
                 continue
 
             try:
@@ -991,7 +1007,8 @@ class ModManager:
                     progress_cb(downloaded / total)
 
         buf.seek(0)
-        subfolder = cfg.get("subfolder", "")
+        subfolder    = cfg.get("subfolder", "")
+        install_subdir = cfg.get("install_subdir", "")
 
         with zipfile.ZipFile(buf) as zf:
             self._prepare_modloader_update_target(game_key, install_dir)
@@ -1011,6 +1028,17 @@ class ModManager:
                         os.makedirs(os.path.dirname(dest), exist_ok=True)
                         with zf.open(member) as src, open(dest, "wb") as dst:
                             dst.write(src.read())
+            elif install_subdir:
+                # Extract into a specific subdirectory of install_dir
+                # e.g. subnautica_2 needs files in Subnautica2/Binaries/Win64/
+                target_dir = os.path.join(install_dir, install_subdir)
+                for member in zf.namelist():
+                    if member.endswith("/"):
+                        continue
+                    dest = os.path.join(target_dir, member)
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
+                    with zf.open(member) as src, open(dest, "wb") as dst:
+                        dst.write(src.read())
             else:
                 zf.extractall(install_dir)
 
@@ -1404,10 +1432,164 @@ class ModManager:
         del self.installed[game_key][mod_id]
         self._save_installed()
 
+    def _ue4ss_mod_root(self, game_key, entry):
+        """
+        For UE4SS-format mods, locate the mod's root folder (Mods/<ModName>)
+        and the Mods/ directory it lives in, derived from the mod's tracked
+        files and the game's configured mod_dest. Returns
+        (mod_root_dir, mod_folder, mods_dir) or None if it can't be determined.
+        """
+        cfg = MODLOADER_CONFIGS.get(game_key, {})
+        dest_parts = [p for p in cfg.get("mod_dest", "").replace("\\", "/").split("/") if p]
+        if not dest_parts:
+            return None
+
+        lower_dest = [p.lower() for p in dest_parts]
+
+        for path in entry.get("files", []):
+            parts = os.path.normpath(path).split(os.sep)
+            lower_parts = [p.lower() for p in parts]
+            for i in range(len(parts) - len(lower_dest)):
+                if lower_parts[i:i + len(lower_dest)] == lower_dest:
+                    mod_folder_idx = i + len(lower_dest)
+                    mods_dir   = os.sep.join(parts[:mod_folder_idx])
+                    mod_folder = parts[mod_folder_idx]
+                    mod_root_dir = os.path.join(mods_dir, mod_folder)
+                    return mod_root_dir, mod_folder, mods_dir
+
+        return None
+
+    def _toggle_ue4ss_enabled_txt(self, mod_root_dir, enable):
+        """
+        Toggle a UE4SS Lua mod on/off via enabled.txt, which "bypasses load
+        order control" per UE4SS docs - i.e. its presence enables the mod
+        regardless of mods.txt. We rename it to enabled.txt.disabled when
+        disabling (preserving it for re-enable), and create an empty one on
+        enable if the mod never shipped with one.
+        """
+        enabled_path  = os.path.join(mod_root_dir, "enabled.txt")
+        disabled_path = enabled_path + ".disabled"
+
+        if enable:
+            if os.path.exists(enabled_path):
+                return
+            if os.path.exists(disabled_path):
+                os.rename(disabled_path, enabled_path)
+            else:
+                os.makedirs(mod_root_dir, exist_ok=True)
+                open(enabled_path, "w", encoding="utf-8").close()
+        else:
+            if not os.path.exists(enabled_path):
+                return
+            if os.path.exists(disabled_path):
+                os.remove(disabled_path)
+            os.rename(enabled_path, disabled_path)
+
+    def _set_ue4ss_mods_txt_entry(self, mods_dir, mod_folder, enable):
+        """
+        Update an existing Mods/mods.txt entry for this mod, if mods.txt
+        already exists. We never create mods.txt ourselves - UE4SS generates
+        it with required built-in entries (e.g. Keybinds) on first launch,
+        and writing a partial file before that could break those defaults.
+        New entries are inserted before any "Keybinds" line, since UE4SS
+        requires built-in keybind entries to stay at the bottom of the file.
+        """
+        mods_txt_path = os.path.join(mods_dir, "mods.txt")
+        if not os.path.exists(mods_txt_path):
+            return
+
+        try:
+            with open(mods_txt_path, "r", encoding="utf-8", errors="replace") as f:
+                lines = f.read().splitlines()
+        except Exception as exc:
+            self._log_debug(f"_set_ue4ss_mods_txt_entry read failed path={mods_txt_path!r} error={exc!r}")
+            return
+
+        new_line = f"{mod_folder} : {1 if enable else 0}"
+        pattern  = re.compile(r"^\s*" + re.escape(mod_folder) + r"\s*:\s*\d+", re.IGNORECASE)
+        keybind_idx = None
+        replaced = False
+
+        for i, line in enumerate(lines):
+            code = line.split(";", 1)[0]
+            if pattern.match(code):
+                lines[i] = new_line
+                replaced = True
+                break
+            if keybind_idx is None and re.match(r"^\s*Keybinds\s*:", code, re.IGNORECASE):
+                keybind_idx = i
+
+        if not replaced:
+            if keybind_idx is not None:
+                lines.insert(keybind_idx, new_line)
+            else:
+                lines.append(new_line)
+
+        try:
+            with open(mods_txt_path, "w", encoding="utf-8", newline="\n") as f:
+                f.write("\n".join(lines) + ("\n" if lines else ""))
+        except Exception as exc:
+            self._log_debug(f"_set_ue4ss_mods_txt_entry write failed path={mods_txt_path!r} error={exc!r}")
+
+    def _refresh_ue4ss_enabled_txt_tracking(self, entry, mod_root_dir):
+        """
+        Keep entry['files'] in sync with whichever of enabled.txt /
+        enabled.txt.disabled currently exists on disk, so uninstall and
+        future toggles find the right file.
+        """
+        enabled_path  = os.path.join(mod_root_dir, "enabled.txt")
+        disabled_path = enabled_path + ".disabled"
+        tracked = {
+            os.path.normcase(os.path.normpath(enabled_path)),
+            os.path.normcase(os.path.normpath(disabled_path)),
+        }
+
+        files = [
+            f for f in entry.get("files", [])
+            if os.path.normcase(os.path.normpath(f)) not in tracked
+        ]
+
+        if os.path.exists(enabled_path):
+            files.append(enabled_path)
+        elif os.path.exists(disabled_path):
+            files.append(disabled_path)
+
+        entry["files"] = files
+
+    def _set_ue4ss_mod_state(self, game_key, entry, enable):
+        root_info = self._ue4ss_mod_root(game_key, entry)
+        if not root_info:
+            self._log_debug(
+                f"_set_ue4ss_mod_state: could not determine mod root for "
+                f"game_key={game_key!r} files={entry.get('files', [])!r}"
+            )
+            return
+
+        mod_root_dir, mod_folder, mods_dir = root_info
+
+        try:
+            self._toggle_ue4ss_enabled_txt(mod_root_dir, enable)
+        except Exception as exc:
+            self._log_debug(f"_set_ue4ss_mod_state enabled.txt toggle failed: {exc!r}")
+
+        try:
+            self._set_ue4ss_mods_txt_entry(mods_dir, mod_folder, enable)
+        except Exception as exc:
+            self._log_debug(f"_set_ue4ss_mod_state mods.txt update failed: {exc!r}")
+
+        self._refresh_ue4ss_enabled_txt_tracking(entry, mod_root_dir)
+
     def enable_mod(self, game_key, mod_id):
         entry = self.installed.get(game_key, {}).get(mod_id)
         if not entry:
             return
+
+        if MODLOADER_CONFIGS.get(game_key, {}).get("mod_format") == "ue4ss":
+            self._set_ue4ss_mod_state(game_key, entry, True)
+            entry["enabled"] = True
+            self._save_installed()
+            return
+
         updated = []
         for path in entry.get("files", []):
             if path.endswith(".disabled"):
@@ -1425,6 +1607,13 @@ class ModManager:
         entry = self.installed.get(game_key, {}).get(mod_id)
         if not entry:
             return
+
+        if MODLOADER_CONFIGS.get(game_key, {}).get("mod_format") == "ue4ss":
+            self._set_ue4ss_mod_state(game_key, entry, False)
+            entry["enabled"] = False
+            self._save_installed()
+            return
+
         updated = []
         for path in entry.get("files", []):
             if path.endswith(".dll") and os.path.exists(path):
@@ -1584,6 +1773,7 @@ class ModManager:
     def write_text_file(self, path, text):
         with open(path, "w", encoding="utf-8", newline="") as f:
             f.write(text)
+
     def import_thunderstore_modpack(self, community, code):
         """
         Resolve a Thunderstore profile share code.
@@ -1786,4 +1976,3 @@ class PlanetCrafterAdapter(GameAdapter):
 
     def get_plugins_path(self):
         return os.path.join(self.install_dir, "BepInEx", "plugins")
-
