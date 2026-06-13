@@ -560,6 +560,25 @@
         }
       ]
     },
+    "subnautica_2": {
+      "mods": [
+        {
+          "id": "passive_creatures",
+          "name": "Passive Creatures",
+          "author": "ksxkshan",
+          "version": "v2.1.0 - Multiplayer Beta",
+          "description": "Peaceful-mode toggle for Subnautica 2: hostile creatures ignore the player and vehicles. Toggle on/off with Ctrl+Shift+T. Tested in single-player only. Beta multiplayer version available to download and test. Please report findings.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PassiveCreatures_v2.1.0.zip",
+              "filename": "PassiveCreatures_v2.1.0.zip",
+              "destination": "Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
+        }
+      ]
+    },
     "slime_rancher": {
       "mods": [
         {
