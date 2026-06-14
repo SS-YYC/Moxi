@@ -271,6 +271,321 @@
               "destination": "BepInEx/plugins"
             }
           ]
+        },
+        {
+          "id": "nicki0-cheat-custom-ore-randomization",
+          "name": "Cheat Custom Ore Randomization",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Customize ore randomization and spawning.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-CheatCustomOreRandomization.zip",
+              "filename": "Nicki0-CheatCustomOreRandomization.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-cheat-machine-config",
+          "name": "Cheat Machine Config",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Configure machine settings and parameters.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-CheatMachineConfig.zip",
+              "filename": "Nicki0-CheatMachineConfig.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-cheat-store-toxins",
+          "name": "Cheat Store Toxins in Toxic Storage",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Store toxins in toxic storage containers.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-CheatStoreToxinsinToxicStorage.zip",
+              "filename": "Nicki0-CheatStoreToxinsinToxicStorage.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-large-screens",
+          "name": "Feat Large Screens",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Support for large screen displays.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatLargeScreens.zip",
+              "filename": "Nicki0-FeatLargeScreens.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-planet-selector",
+          "name": "Feat Planet Selector",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Select and switch between planets.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatPlanetSelector.zip",
+              "filename": "Nicki0-FeatPlanetSelector.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-portal-teleport",
+          "name": "Feat Portal Teleport",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Teleport through portals.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatPortalTeleport.zip",
+              "filename": "Nicki0-FeatPortalTeleport.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-space-station-planet",
+          "name": "Feat Space Station Planet",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Space station as a visitable planet.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatSpaceStationPlanet.zip",
+              "filename": "Nicki0-FeatSpaceStationPlanet.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-terrain-height-tool",
+          "name": "Feat Terrain Height Tool",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Tool to modify terrain height and elevation.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatTerrainHeightTool.zip",
+              "filename": "Nicki0-FeatTerrainHeightTool.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-feat-underground-base",
+          "name": "Feat Underground Base",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Build and maintain underground bases.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FeatUndergroundBase.zip",
+              "filename": "Nicki0-FeatUndergroundBase.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-fix-rocket-return",
+          "name": "Fix Rocket Return",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Fixes rocket return functionality.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FixRocketReturn.zip",
+              "filename": "Nicki0-FixRocketReturn.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-fix-water-wave-config",
+          "name": "Fix Water Wave Config",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Configure water wave behavior and appearance.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-FixWaterWaveConfig.zip",
+              "filename": "Nicki0-FixWaterWaveConfig.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-item-more-fuses",
+          "name": "Item More Fuses",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Add more fuses to the game.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-ItemMoreFuses.zip",
+              "filename": "Nicki0-ItemMoreFuses.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-qol-auto-logistics",
+          "name": "QoL Auto Logistics",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Automatic logistics and item distribution system.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-QoLAutoLogistics.zip",
+              "filename": "Nicki0-QoLAutoLogistics.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-qol-meteor-debris-config",
+          "name": "QoL Meteor Debris Config",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Configure meteor debris spawning and behavior.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-QoLMeteorDebrisConfig.zip",
+              "filename": "Nicki0-QoLMeteorDebrisConfig.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-qol-move-containers",
+          "name": "QoL Move Containers",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Easily move and manage containers.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-QoLMoveContainers.zip",
+              "filename": "Nicki0-QoLMoveContainers.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-qol-skip-tutorial",
+          "name": "QoL Skip Tutorial",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Skip the game tutorial on startup.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-QoLSkipTutorial.zip",
+              "filename": "Nicki0-QoLSkipTutorial.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-ui-change-music",
+          "name": "UI Change Music",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Change and configure in-game music.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-UiChangeMusic.zip",
+              "filename": "Nicki0-UiChangeMusic.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-ui-confine-mouse",
+          "name": "UI Confine Mouse",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Confine mouse cursor to game window.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-UiConfineMouse.zip",
+              "filename": "Nicki0-UiConfineMouse.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-ui-more-units",
+          "name": "UI More Units",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Display more unit types in the UI.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-UiMoreUnits.zip",
+              "filename": "Nicki0-UiMoreUnits.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-ui-sound-config",
+          "name": "UI Sound Config",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Configure sound settings and audio.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-UiSoundConfig.zip",
+              "filename": "Nicki0-UiSoundConfig.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "nicki0-visual-hide-objects",
+          "name": "Visual Hide Objects",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "description": "Hide specific objects from view.",
+          "files": [
+            {
+              "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-VisualHideObjects.zip",
+              "filename": "Nicki0-VisualHideObjects.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
         }
       ],
       "github_bundles": [
@@ -290,6 +605,15 @@
           "destination": "BepInEx/plugins",
           "name_prefix": "",
           "id_prefix": "lathrey-",
+          "description_prefix": "Installed from GitHub bundle: "
+        },
+        {
+          "url": "https://github.com/mcnicki2002/PlanetCrafterMods/releases/download/v072/Nicki0-all.zip",
+          "author": "Nicki0",
+          "version": "0.7.2",
+          "destination": "BepInEx/plugins",
+          "name_prefix": "",
+          "id_prefix": "nicki0-",
           "description_prefix": "Installed from GitHub bundle: "
         }
       ]
