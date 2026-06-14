@@ -129,7 +129,7 @@ Games listed in the Coming Soon section of the dashboard are managed through `Ga
 
 ## Built With
 
-- Python 3
+- Python 3.14.6 (Pre 2.6.x versions used 3.13)
 - CustomTkinter
 - Pillow
 - Requests
