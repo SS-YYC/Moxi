@@ -176,7 +176,7 @@
           "id": "player_tracker",
           "name": "Player Tracker",
           "author": "bknibb",
-          "version": "1.2.1",
+          "version": "1.2.0",
           "description": "Adds a beacon like tracker to players on the map and in 3d (map tracker is disabled by default).",
           "files": [
             {
@@ -945,6 +945,21 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RealisticCraft.zip",
               "filename": "RealisticCraft.zip",
               "destination": "",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "lifepod_uplink",
+          "name": "Lifepod Uplink",
+          "author": "chewraccoons",
+          "version": "1",
+          "description": "Adds remote access to the Lifepod's (repaired) fabricator and wall locker. F to open Fabricator, G to open the locker.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/LifepodUplink.zip",
+              "filename": "LifepodUplink.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
               "extract": true
             }
           ]
