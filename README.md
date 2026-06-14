@@ -22,6 +22,7 @@ Moxi detects your Steam games automatically, pulls mods from a curated index, ha
 |------|--------|
 | Planet Crafter | Supported |
 | Subnautica | Supported |
+| Subnautica 2 | Supported|
 | Subnautica: Below Zero | Supported |
 | Slime Rancher | Supported |
 | Slime Rancher 2 | Supported |
