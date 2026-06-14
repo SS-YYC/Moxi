@@ -176,7 +176,7 @@
           "id": "player_tracker",
           "name": "Player Tracker",
           "author": "bknibb",
-          "version": "1.2.0",
+          "version": "1.2.1",
           "description": "Adds a beacon like tracker to players on the map and in 3d (map tracker is disabled by default).",
           "files": [
             {
