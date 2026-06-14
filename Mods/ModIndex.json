@@ -231,48 +231,6 @@
           ]
         },
         {
-          "id": "lathrey-fix-beacon",
-          "name": "Fix Beacon",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "description": "Fixes issues with beacon functionality.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-FixBeacon.dll",
-              "filename": "Lathrey-FixBeacon.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
-          "id": "lathrey-improve-performance",
-          "name": "Improve Performance",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "description": "Improves overall game performance and optimization.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ImprovePerformance.dll",
-              "filename": "Lathrey-ImprovePerformance.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
-          "id": "lathrey-toggle-fog",
-          "name": "Toggle Fog",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "description": "Allows toggling fog on and off for better visibility.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ToggleFog.dll",
-              "filename": "Lathrey-ToggleFog.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
           "id": "nicki0-cheat-custom-ore-randomization",
           "name": "Cheat Custom Ore Randomization",
           "author": "Nicki0",
@@ -615,6 +573,644 @@
           "name_prefix": "",
           "id_prefix": "nicki0-",
           "description_prefix": "Installed from GitHub bundle: "
+        }
+      ]
+    },
+    "subnautica": {
+      "mods": [
+        {
+          "id": "nautilus",
+          "name": "Nautilus",
+          "author": "Subnautica Modding Organization",
+          "version": "1.0.0-pre.49",
+          "description": "Nautilus is the core Subnautica modding library that aims to enhance developer productivity by offering common helper utilities as easy to use and robust as possible.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus.dll",
+              "filename": "Nautilus.dll",
+              "destination": "BepInEx/plugins/Nautilus"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus.xml",
+              "filename": "Nautilus.xml",
+              "destination": "BepInEx/plugins/Nautilus"
+            }
+          ]
+        },
+        {
+          "id": "solid_terrain",
+          "name": "Solid Terrain (BepInEx)",
+          "author": "MrPurple6411",
+          "version": "2.0.0.1",
+          "support": "https://www.paypal.com/donate?token=yU-3ScgxBAKIbO9K_kbPp0xFKKeTq1L74MWeDE0ezEohpE8rYFU9OAraG2J4t-qG71o-tRQhokKcKhCM&locale.x=US",
+          "description": "This mod increases the terrain collision loading distance by about 4-5x normal to attempt to stop Reapers, Crash fish and other creatures from being able to swim through the ground when not close to the player.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SolidTerrain.dll",
+              "filename": "SolidTerrain.dll",
+              "destination": "BepInEx/plugins/SolidTerrain"
+            }
+          ]
+        },
+        {
+          "id": "epic_structure_loader",
+          "name": "Epic Structure Loader",
+           "dependencies": [
+            "nautilus"
+          ],
+          "author": "Kallie23",
+          "version": "1.0.2",
+          "support": "https://www.paypal.com/donate?token=8ouo045YpNkVv-zJ4grLWUrNkhsPltQbholSRDoIvzKlkQDWKf7k5B0g8-PjyvNiOmNRngA2DuIWK10j&locale.x=US",
+          "description": "A basic mod library for loading custom mod structures.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EpicStructureLoaderRENAMED.zip",
+              "filename": "EpicStructureLoaderRENAMED.dll",
+              "destination": "BepInEx",
+              "extract": true,
+              "include_prefix": ""
+            }
+          ]
+        },
+        {
+          "id": "more_torpedo_damage",
+          "name": "More Torpedo Damage",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "nb77",
+          "version": "1",
+          "description": "Gas torpedoes do extra configurable damage, Vortex do 1/3 of extra damage.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Gassubmod.dll",
+              "filename": "Gassubmod.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "easycraft",
+          "name": "EasyCraft",
+          "author": "newman55",
+          "version": "1.1.6",
+          "description": "Automatically crafts ingredients for a blueprint and takes materials from the neighboring storage.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EasyCraft.dll",
+              "filename": "EasyCraft.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "upgrades_lib",
+          "name": "Upgrades LIB",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "LawAbdidingDeveloper",
+          "version": "1.3.0",
+          "description": "A dependency for all of my upgrades mods.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/UpgradesLIB.dll",
+              "filename": "UpgradesLIB.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "radial_tabs",
+          "name": "Radial Tabs",
+          "author": "MrPurple6411",
+          "version": "2.0.0.1",
+          "support": "https://www.paypal.com/donate?token=yU-3ScgxBAKIbO9K_kbPp0xFKKeTq1L74MWeDE0ezEohpE8rYFU9OAraG2J4t-qG71o-tRQhokKcKhCM&locale.x=US",
+          "description": "Welcome to the world of circles.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RadialTabs.dll",
+              "filename": "RadialTabs.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "mobile_resource_scanner",
+          "name": "Mobile Resource Scanner",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "aedenthorn",
+          "version": "1.2.1",
+          "description": "Lets you craft an equipable chip to replicate scanner room functionality on-the-go.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/MobileResourceScanner.dll",
+              "filename": "MobileResourceScanner.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "bed_teleport",
+          "name": "Bed Teleport",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "aedenthorn",
+          "version": "0.4.0",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport.dll",
+              "filename": "BedTeleport.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "ungeziefi-fixes",
+          "name": "Fixes",
+          "author": "Ungeziefi",
+          "version": "1.0.0-alpha.6.hf1",
+          "source": "github",
+          "description": "T&F Rework fixes pack for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/Ungeziefi/Subnautica-Mods/releases/download/v1.0.0-alpha.6.hf1/Fixes.7z",
+              "filename": "Fixes.7z",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "ungeziefi-tweaks",
+          "name": "Tweaks",
+          "author": "Ungeziefi",
+          "version": "1.0.0-alpha.6.hf1",
+          "source": "github",
+          "description": "T&F Rework tweaks pack for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/Ungeziefi/Subnautica-Mods/releases/download/v1.0.0-alpha.6.hf1/Tweaks.7z",
+              "filename": "Tweaks.7z",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "terraforming",
+          "name": "Terraforming",
+          "author": "repkins",
+          "version": "1.4.5",
+          "source": "github",
+          "description": "Terraforming mod for original Subnautica.",
+          "files": [
+            {
+              "url": "https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.5/Terraforming_v145.zip",
+              "filename": "Terraforming_v145.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "drill_tool",
+          "name": "Drill Tool",
+          "author": "Cameo221",
+          "version": "1.0.1",
+          "dependencies": [
+            "nautilus"
+          ],
+          "description": "A handheld tool to drill large resource deposits.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/DrillToolRENAMED.zip",
+              "filename": "DrillToolRENAMED.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "seamoth_module_expansion",
+          "name": "SeamothModuleExpansion (BepInEx)",
+          "dependencies": [
+            "nautilus"
+          ],
+          "author": "aedenthorn",
+          "version": "0.4.0",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport.dll",
+              "filename": "BedTeleport.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        }
+      ]
+    },
+    "subnautica_bz": {
+      "mods": [
+        {
+          "id": "nautilus_bz",
+          "name": "Nautilus BZ",
+          "author": "Subnautica Modding Organization",
+          "version": "1.0.0-pre.49",
+          "description": "Nautilus is the core Subnautica modding library that aims to enhance developer productivity by offering common helper utilities as easy to use and robust as possible.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus/Nautilus.dll",
+              "filename": "Nautilus.dll",
+              "destination": "BepInEx/plugins/Nautilus"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Nautilus/Nautilus.xml",
+              "filename": "Nautilus.xml",
+              "destination": "BepInEx/plugins/Nautilus"
+            }
+          ]
+        },
+        {
+          "id": "bed_teleport_bz",
+          "name": "Bed Teleport BZ",
+          "dependencies": [
+            "nautilus_bz"
+          ],
+          "author": "aedenthorn",
+          "version": "0.3.2",
+          "description": "Lets you teleport between beds anywhere in the world by interacting with any bed when specified key is hold (Left Shift).",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BedTeleport_BZ.dll",
+              "filename": "BedTeleport_BZ.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "enable_achievements",
+          "name": "Enable Achievements",
+          "author": "TLG53787",
+          "version": "1.0.0",
+          "description": "Allows you to earn achievements while using console commands or custom game modes.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/EnableAchievements.dll",
+              "filename": "EnableAchievements.dll",
+              "destination": "BepInEx/plugins/EnableAchievements"
+            }
+          ]
+        },
+        {
+          "id": "terraforming_bz",
+          "name": "Terraforming BZ",
+          "author": "repkins",
+          "version": "1.4.5",
+          "source": "github",
+          "description": "Terraforming mod for Subnautica: Below Zero.",
+          "files": [
+            {
+              "url": "https://github.com/repkins/subnautica-terraforming-mod/releases/download/v1.4.5/TerraformingBZ_v145.zip",
+              "filename": "TerraformingBZ_v145.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
+        }
+      ]
+    },
+    "subnautica_2": {
+      "mods": [
+        {
+          "id": "passive_creatures",
+          "name": "Passive Creatures",
+          "author": "ksxkshan",
+          "version": "2.1.0 - Multiplayer Beta",
+          "description": "Peaceful-mode toggle for Subnautica 2: hostile creatures ignore the player and vehicles. Toggle on/off with Ctrl+Shift+T.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/PassiveCreatures_v2.1.0.zip",
+              "filename": "PassiveCreatures_v2.1.0.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "third_person_camera",
+          "name": "Third Person Camera",
+          "author": "uregven",
+          "version": "1",
+          "description": "Simple UE4SS mod that allows you toggle third person with X.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/ThirdPersonCamera.zip",
+              "filename": "ThirdPersonCamera.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "sdf",
+          "name": "Subnautica Data Framework (SDF)",
+          "author": "LimoDerEchte",
+          "version": "0.1.3-alpha",
+          "description": "The SDF provides tooling to add content to Subnautica 2 in a data driven way with minimal usage of complex modding tools. It provides a simple file format for mod creators to use and will, in the future, also support a Lua and potentially C++ API.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SDF_Alpha_0.1.3.zip",
+              "filename": "SDF_Alpha_0.1.3.zip",
+              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
+              "extract": true
+            }
+          ]
+        },
+        {
+          "id": "realistic_survival",
+          "name": "Realistic Survival",
+          "dependencies": [
+            "sdf"
+          ],
+          "author": "TerryTie - addi-4th",
+          "version": "1.7",
+          "description": "A mod to make survival gameplay in Subnautica 2 more immersive and more rewarding.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RealisticCraft.zip",
+              "filename": "RealisticCraft.zip",
+              "destination": "",
+              "extract": true
+            }
+          ]
+        }
+      ]
+    },
+    "slime_rancher": {
+      "mods": [
+        {
+          "id": "sr_mod_lib",
+          "name": "Simple SR mod library (Core mod)",
+          "author": "Zion",
+          "version": "6.0.0",
+          "support": "https://www.paypal.com/donate?token=00qXzp8Fb1lR3Z83E03dc1oSymqQ6TGGGrai72Chvg4j8FMETZee18fiJLeboVigCmPKSQLhx68QyeLN&locale.x=US",
+          "description": "A mod library designed to make basic mods easier and simpler to make.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SimpleSRmodLibrary.dll",
+              "filename": "SimpleSRmodLibrary.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "assets_lib",
+          "name": "Assets Lib",
+          "author": "Aidanamite",
+          "version": "1.2.6",
+          "description": "Adds various tools for doing assets related stuff",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/AssetsLib.dll",
+              "filename": "AssetsLib.dll",
+              "destination": "SRML/Mods"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/AssetsLib.xml",
+              "filename": "AssetsLib.xml",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "velocity_slimes",
+          "name": "Velocity Slimes",
+          "dependencies": [
+            "sr_mod_lib",
+            "assets_lib"
+          ],
+          "author": "Zion aka Kokoro",
+          "version": "0.1.tomato",
+          "support": "https://www.paypal.com/donate?token=00qXzp8Fb1lR3Z83E03dc1oSymqQ6TGGGrai72Chvg4j8FMETZee18fiJLeboVigCmPKSQLhx68QyeLN&locale.x=US",
+          "description": "This mod adds slimes with various abilities of velocity manipulation, along with some fun items that somewhat fit the theme.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VelocitySlimes.dll",
+              "filename": "VelocitySlimes.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "slimes_and_market_redux",
+          "name": "Slimes And Market Redux",
+          "author": "AlchlcSystm and FrostDracony",
+          "version": "1.6.2",
+          "description": "Sell slimes just like their plorts! Formerly made by FrostDracony, the original mod was left in a bugged state so here's a recoded and improved version!",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SlimesAndMarket.dll",
+              "filename": "SlimesAndMarket.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        },
+        {
+          "id": "spore_slimes_remaster",
+          "name": "Spore Slimes REMASTER",
+          "author": "Regal",
+          "version": "6.1.0.0",
+          "description": "A mod that adds 2 unique slimes.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SporeSlime.dll",
+              "filename": "SporeSlime.dll",
+              "destination": "SRML/Mods"
+            }
+          ]
+        }
+      ]
+    },
+    "slime_rancher_2": {
+      "mods": [
+        {
+          "id": "vacuum_modifications",
+          "name": "Vacuum Modifications",
+          "author": "BreadCh4n",
+          "version": "2.2.4",
+          "description": "This mod allows you to customize the limits of the storage containers and your vacuum to your liking.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/VacuumModifications.dll",
+              "filename": "VacuumModifications.dll",
+              "destination": "Mods"
+            }
+          ]
+        },
+        {
+          "id": "interpolator",
+          "name": "Interpolator",
+          "author": "PieKing1215",
+          "version": "1.0.0",
+          "description": "Fixes choppy/low fps physics objects & first person vac animation.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/SR2Interpolator.dll",
+              "filename": "SR2Interpolator.dll",
+              "destination": "Mods"
+            }
+          ]
+        },
+        {
+          "id": "skip-intro-sequence",
+          "name": "Skip Intro Sequence",
+          "author": "markekraus",
+          "version": "1.0.0",
+          "source": "github",
+          "description": "A Slime Rancher 2 mod that skips the intro sequence.",
+          "files": [
+            {
+              "url": "https://github.com/markekraus/SR2SkipIntroSequence/releases/download/v1.0.0/SkipIntroSequence.dll",
+              "filename": "SkipIntroSequence.dll",
+              "destination": "Mods",
+              "extract": false
+            }
+          ]
+        }
+      ]
+    },
+    "schedule_i": {
+      "mods": [
+        {
+          "id": "drones_forked",
+          "name": "Drones by ThrustGoblin forked",
+          "author": "Created by ThrustGoblin Uploaded by Virtunerd",
+          "version": "1.1.0",
+          "description": "Updated version of the OG drones mod by ThrustGobling. Use drones to deliver product to customers, transfer items between properties, or pilot them yourself all with the drone app!",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/Drones.dll",
+              "filename": "Drones.dll",
+              "destination": "Mods"
+            }
+          ]
+        },
+        {
+          "id": "better_stacks",
+          "name": "Better Stacks",
+          "author": "zarnes",
+          "version": "2.0.1",
+          "description": "This mod allow the player to multiply the stack limit per category of items.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterStacks.dll",
+              "filename": "BetterStacks.dll",
+              "destination": "Mods"
+            },
+            {
+              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/BetterStackConfigs.json",
+              "filename": "BetterStackConfig.json",
+              "destination": "Mods"
+            }
+          ]
+        }
+      ]
+    },
+    "out_of_ore": {
+      "mods": [
+        {
+          "id": "pyrite",
+          "name": "Pyrite",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0-Beta",
+          "description": "A mod loader for the game Out of Ore, currently basic, can only do simple .ini files but I am expanding it.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/Pyrite/raw/main/Pyrite_BETA_v1.0.0.zip",
+              "filename": "Pyrite_BETA_v1.0.0.zip",
+              "destination": "",
+              "extract": true,
+              "include_prefix": "Pyrite"
+            }
+          ]
+        }
+      ]
+    },
+    "railroads_online": {
+      "mods": [
+        {
+          "id": "realrailroading",
+          "name": "Real Railroading (BROKEN)",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Improves the physics and realism of railroading, currently only makes sand more useful.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/RealRailroading-v1.0.0.zip",
+              "filename": "RealRailroading-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "RealRailroading"
+            }
+          ]
+        },
+        {
+          "id": "timewarp",
+          "name": "Timewarp",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Allows you to speed up time in game by 1-4x speed, keybinds are ctrl + F1, F2, F3, or F4.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/Timewarp-v1.0.0.zip",
+              "filename": "Timewarp-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "Timewarp"
+            }
+          ]
+        },
+        {
+          "id": "slightly_better_visuals",
+          "name": "Slightly Better Visuals",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Slightly imrpoves the visuals by changing the brightness & contrast, it is more of an opinion but I like the way it looks.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/Slightly-Better-Visuals-v1.0.0.zip",
+              "filename": "Slightly-Better-Visuals-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "SlightlyBetterVisuals"
+            }
+          ]
+        },
+        {
+          "id": "ue_bridge",
+          "name": "UEBridge",
+          "author": "KerbalMissile",
+          "source": "github",
+          "version": "1.0.0",
+          "description": "Exposes the names of certain things inside of the .pak's and .exe's, currently no information on them can be exposed as of v1.0.0 of UEBridge.",
+          "files": [
+            {
+              "url": "https://github.com/KerbalMissile/RRO-Mods-KM/raw/main/UEBridgeMod-v1.0.0.zip",
+              "filename": "UEBridgeMod-v1.0.0.zip",
+              "destination": "Mods",
+              "extract": true,
+              "include_prefix": "UEBridge"
+            }
+          ]
         }
       ]
     }
