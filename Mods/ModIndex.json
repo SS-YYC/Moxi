@@ -544,6 +544,21 @@
               "extract": true
             }
           ]
+        },
+        {
+          "id": "logistics-info",
+          "name": "Logistics Info",
+          "author": "rodikh",
+          "version": "1.0.0",
+          "description": "Adds logistics QoL: a hover panel showing each container's supply, demand, and priority, plus counters in the supply/demand selector that show how many containers are assigned to each.",
+          "files": [
+            {
+              "url": "https://github.com/rodikh/UILogisticsInfo-PlanetCrafter-Mod/raw/main/dist/LogisticsInfo-1.0.0.zip",
+              "filename": "LogisticsInfo-1.0.0.zip",
+              "destination": "BepInEx/plugins",
+              "extract": true
+            }
+          ]
         }
       ],
       "github_bundles": [
@@ -945,21 +960,6 @@
               "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/RealisticCraft.zip",
               "filename": "RealisticCraft.zip",
               "destination": "",
-              "extract": true
-            }
-          ]
-        },
-        {
-          "id": "lifepod_uplink",
-          "name": "Lifepod Uplink",
-          "author": "chewraccoons",
-          "version": "1",
-          "description": "Adds remote access to the Lifepod's (repaired) fabricator and wall locker. F to open Fabricator, G to open the locker.",
-          "files": [
-            {
-              "url": "https://github.com/KerbalMissile/MoxiDefaultMods/raw/main/LifepodUplink.zip",
-              "filename": "LifepodUplink.zip",
-              "destination": "Subnautica2/Binaries/Win64/ue4ss/Mods",
               "extract": true
             }
           ]
