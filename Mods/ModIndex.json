@@ -231,51 +231,6 @@
           ]
         },
         {
-          "id": "lathrey-fix-beacon",
-          "name": "Fix Beacon",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "source": "github",
-          "description": "Fixes issues with beacon functionality.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-FixBeacon.dll",
-              "filename": "Lathrey-FixBeacon.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
-          "id": "lathrey-improve-performance",
-          "name": "Improve Performance",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "source": "github",
-          "description": "Improves overall game performance and optimization.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ImprovePerformance.dll",
-              "filename": "Lathrey-ImprovePerformance.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
-          "id": "lathrey-toggle-fog",
-          "name": "Toggle Fog",
-          "author": "Lathrey",
-          "version": "2.5.0",
-          "source": "github",
-          "description": "Allows toggling fog on and off for better visibility.",
-          "files": [
-            {
-              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ToggleFog.dll",
-              "filename": "Lathrey-ToggleFog.dll",
-              "destination": "BepInEx/plugins"
-            }
-          ]
-        },
-        {
           "id": "nicki0-cheat-custom-ore-randomization",
           "name": "Cheat Custom Ore Randomization",
           "author": "Nicki0",
