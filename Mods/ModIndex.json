@@ -231,6 +231,51 @@
           ]
         },
         {
+          "id": "lathrey-fix-beacon",
+          "name": "Fix Beacon",
+          "author": "Lathrey",
+          "version": "2.5.0",
+          "source": "github",
+          "description": "Fixes issues with beacon functionality.",
+          "files": [
+            {
+              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-FixBeacon.dll",
+              "filename": "Lathrey-FixBeacon.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "lathrey-improve-performance",
+          "name": "Improve Performance",
+          "author": "Lathrey",
+          "version": "2.5.0",
+          "source": "github",
+          "description": "Improves overall game performance and optimization.",
+          "files": [
+            {
+              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ImprovePerformance.dll",
+              "filename": "Lathrey-ImprovePerformance.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
+          "id": "lathrey-toggle-fog",
+          "name": "Toggle Fog",
+          "author": "Lathrey",
+          "version": "2.5.0",
+          "source": "github",
+          "description": "Allows toggling fog on and off for better visibility.",
+          "files": [
+            {
+              "url": "https://github.com/TysonCodes/PlanetCrafterPlugins/releases/download/v2.5.0/Lathrey-ToggleFog.dll",
+              "filename": "Lathrey-ToggleFog.dll",
+              "destination": "BepInEx/plugins"
+            }
+          ]
+        },
+        {
           "id": "nicki0-cheat-custom-ore-randomization",
           "name": "Cheat Custom Ore Randomization",
           "author": "Nicki0",
@@ -243,7 +288,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-cheat-machine-config",
@@ -258,7 +304,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-cheat-store-toxins",
@@ -273,7 +320,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-large-screens",
@@ -288,7 +336,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-planet-selector",
@@ -303,7 +352,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-portal-teleport",
@@ -318,7 +368,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-space-station-planet",
@@ -333,7 +384,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-terrain-height-tool",
@@ -348,7 +400,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-feat-underground-base",
@@ -363,7 +416,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-fix-rocket-return",
@@ -378,7 +432,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-fix-water-wave-config",
@@ -393,7 +448,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-item-more-fuses",
@@ -408,7 +464,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-qol-auto-logistics",
@@ -423,7 +480,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-qol-meteor-debris-config",
@@ -438,7 +496,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-qol-move-containers",
@@ -453,7 +512,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-qol-skip-tutorial",
@@ -468,7 +528,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-ui-change-music",
@@ -483,7 +544,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-ui-confine-mouse",
@@ -498,7 +560,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-ui-more-units",
@@ -513,7 +576,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-ui-sound-config",
@@ -528,7 +592,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "nicki0-visual-hide-objects",
@@ -543,7 +608,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         },
         {
           "id": "logistics-info",
@@ -558,7 +624,8 @@
               "destination": "BepInEx/plugins",
               "extract": true
             }
-          ]
+          ],
+          "source": "github"
         }
       ],
       "github_bundles": [
@@ -630,7 +697,7 @@
         {
           "id": "epic_structure_loader",
           "name": "Epic Structure Loader",
-           "dependencies": [
+          "dependencies": [
             "nautilus"
           ],
           "author": "Kallie23",
